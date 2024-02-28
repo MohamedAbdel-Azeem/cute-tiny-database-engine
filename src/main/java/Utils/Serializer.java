@@ -12,7 +12,7 @@ public class Serializer {
         try {
             //you may also write this verbosely as
             // FileOutputStream fileOutputStream = new FileOutputStream(fileName);
-            var fileOutputStream = new FileOutputStream(fileName);
+            var fileOutputStream = new FileOutputStream("./DB/"+fileName+".class");
 
             var objOutputStream = new ObjectOutputStream(fileOutputStream);
 
@@ -34,7 +34,7 @@ public class Serializer {
             //could be written as
             // FileInputStream fileInputStream = new
             //FileInputStream(fileName);
-            var fileInputStream = new FileInputStream(fileName);
+            var fileInputStream = new FileInputStream("./DB/"+fileName+".class");
             var objectInputStream = new ObjectInputStream(fileInputStream);
 
             //read the binary file
