@@ -3,7 +3,7 @@ package Structures;
 import java.io.Serializable;
 import java.util.HashMap;
 
-public class Tuple implements Serializable{
+public class Tuple implements Serializable {
     private HashMap<String,Object> values;
 
     public Tuple(HashMap<String,Object> values){

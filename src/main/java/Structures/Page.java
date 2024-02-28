@@ -1,17 +1,17 @@
 package Structures;
 
-import Structures.Tuple;
-import utils.Configurator;
+import Utils.Configurator;
+
+import java.io.Serializable;
 import java.util.Vector;
 
 
-public class Page {
+public class Page implements Serializable {
     private int maxNumOfRows;
     private Vector<Tuple> tuples;
 
     public Page(){
         this.maxNumOfRows = Configurator.getMaxPageSize();
-        System.out.println(maxNumOfRows);
         tuples = new Vector<Tuple>();
     }
 
