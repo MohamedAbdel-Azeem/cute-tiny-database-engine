@@ -20,10 +20,16 @@ public class Page implements Serializable {
     }
 
     public void addTuple(Tuple tuple){
-        tuples.add(tuple);
+        tuples.addFirst(tuple);
     }
 
     public Vector<Tuple> getTuples(){
         return tuples;
     }
+
+    public String toString(){
+        return tuples.toString();
+    }
+
+
 }
