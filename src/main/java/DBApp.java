@@ -30,7 +30,7 @@ public class DBApp {
 	public void createTable(String strTableName, 
 							String strClusteringKeyColumn,  
 							Hashtable<String,String> htblColNameType) throws DBAppException{
-								
+
 		throw new DBAppException("not implemented yet");
 	}
 

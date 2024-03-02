@@ -1,0 +1,3 @@
+table1,gpa,java.lang.double,false,null,null
+table1,name,java.lang.String,false,null,null
+table1,id,java.lang.Integer,true,null,null
