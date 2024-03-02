@@ -67,6 +67,34 @@ public class Table {
         return pages.toString();
     }
 
+    public static void main(String[] args) {
+        // Create a table
+        Hashtable<String, String> colNameType = new Hashtable<>();
+        colNameType.put("column1", "String");
+        colNameType.put("column2", "Integer");
+        Table table = new Table("tableName", "ClusteringKeyColumn", colNameType);
+
+// Insert tuples into the table for testing
+        Hashtable<String, Object> tuple1 = new Hashtable<>();
+        tuple1.put("column1", "value1");
+        tuple1.put("column2", 100);
+        table.insertTuple(tuple1);
+
+        Hashtable<String, Object> tuple2 = new Hashtable<>();
+        tuple2.put("column1", "value2");
+        tuple2.put("column2", 200);
+        table.insertTuple(tuple2);
+
+        Hashtable<String, Object> tuple3 = new Hashtable<>();
+        tuple3.put("column1", "value3");
+        tuple3.put("column2", 300);
+        table.insertTuple(tuple3);
+        Hashtable<String, Object> tuple4 = new Hashtable<>();
+        tuple4.put("column1", "value4");
+        tuple4.put("column2", 400);
+        table.insertTuple(tuple4);
+        System.out.println(table);
+    }
 
 
 }
