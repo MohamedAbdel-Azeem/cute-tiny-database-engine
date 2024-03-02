@@ -7,6 +7,7 @@ import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVPrinter;
 import org.apache.commons.csv.CSVRecord;
+import DBMain.DBAppException;
 
 public class metaFile {
 
@@ -45,9 +46,10 @@ public class metaFile {
 
     }
 
-    public static void updateOnMetaDataFile(String inputStrTableName, String inputColName, String inputIndexName, String inputIndexType) {
+    public static void updateOnMetaDataFile(String inputStrTableName, String inputColName, String inputIndexName, String inputIndexType) throws Exception {
         String path = "./DB/metadata.csv";
         String newCsvContent="";
+        boolean found = false;
         try (
                 Reader reader = new FileReader(path);
                 CSVParser csvParser = new CSVParser(reader, CSVFormat.DEFAULT.withHeader());
@@ -65,12 +67,17 @@ public class metaFile {
                 if (tableName.equals(inputStrTableName) && columnName.equals(inputColName)) {
                     indexName = inputIndexName;
                     indexType = inputIndexType;
+                    found = true;
                 }
                 newStringRecords.append(tableName + "," + columnName + "," + columnType + "," + clusteringKey + "," + indexName + "," + indexType).append("\n");
             }
             newCsvContent = newStringRecords.toString();
         } catch (IOException e) {
-            System.out.println("Updating the metadata file failed. Problem in Reading File.");
+            throw new IOException("MetaData Reading file Exception!");
+        }
+
+        if (!found){
+            throw new DBAppException("Table or Column not found!");
         }
 
         try (
@@ -78,7 +85,7 @@ public class metaFile {
             ){
             writer.write(newCsvContent);
         } catch (IOException e) {
-            System.out.println("Updating the metadata file failed. Problem in Writing updated File.");
+            throw new IOException("MetaData Writing file Exception!");
         }
 
     }
@@ -92,7 +99,7 @@ public class metaFile {
 //        colNameType.put("name", "String");
 //        colNameType.put("age", "Integer");
 //        appendOnMetaDataFile("table2", "name", colNameType);
-        updateOnMetaDataFile("table2", "age", "ageIndex", "B+Tree");
+//        updateOnMetaDataFile("table2", "age", "ageIndex", "B+Tree");
     }
 
 

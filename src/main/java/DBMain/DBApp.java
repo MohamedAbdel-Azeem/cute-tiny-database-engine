@@ -1,9 +1,9 @@
-
+package DBMain;
 /** * @author Wael Abouelsaadat */ 
 
 import java.util.Iterator;
 import java.util.Hashtable;
-import static Utils.metaFile.generateMetaDataFile;
+import static Utils.metaFile.*;
 
 public class DBApp {
 
@@ -38,9 +38,13 @@ public class DBApp {
 	// following method creates a B+tree index 
 	public void createIndex(String   strTableName,
 							String   strColName,
-							String   strIndexName) throws DBAppException{
-		
-		throw new DBAppException("not implemented yet");
+							String   strIndexName){
+		try{
+			updateOnMetaDataFile(strTableName,strColName,strIndexName,"B+tree");
+		} catch (Exception e){
+			System.out.println(e.getMessage());
+		}
+
 	}
 
 
@@ -87,7 +91,7 @@ public class DBApp {
 
 //	try{
 //			String strTableName = "Student";
-//			DBApp	dbApp = new DBApp( );
+//			DBMain.DBApp	dbApp = new DBMain.DBApp( );
 //
 //			Hashtable htblColNameType = new Hashtable( );
 //			htblColNameType.put("id", "java.lang.Integer");
@@ -127,8 +131,8 @@ public class DBApp {
 //			dbApp.insertIntoTable( strTableName , htblColNameValue );
 //
 //
-//			SQLTerm[] arrSQLTerms;
-//			arrSQLTerms = new SQLTerm[2];
+//			DBMain.SQLTerm[] arrSQLTerms;
+//			arrSQLTerms = new DBMain.SQLTerm[2];
 //			arrSQLTerms[0]._strTableName =  "Student";
 //			arrSQLTerms[0]._strColumnName=  "name";
 //			arrSQLTerms[0]._strOperator  =  "=";
