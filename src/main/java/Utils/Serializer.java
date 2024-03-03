@@ -26,12 +26,12 @@ public class Serializer {
 
     public static Object deserialize(String fileName) {
         Object object = null;
-
+        String path = "./DB/"+fileName+".class";
         try {
             //could be written as
             // FileInputStream fileInputStream = new
             //FileInputStream(fileName);
-            var fileInputStream = new FileInputStream("./DB/"+fileName+".class");
+            var fileInputStream = new FileInputStream(path);
             var objectInputStream = new ObjectInputStream(fileInputStream);
 
             //read the binary file

@@ -1,9 +1,18 @@
 package DBMain;
-/** * @author Wael Abouelsaadat */ 
+/** * @author Wael Abouelsaadat */
 
-import java.util.Iterator;
+import Structures.Table;
+
+
+import java.io.File;
 import java.util.Hashtable;
-import static Utils.metaFile.*;
+import java.util.Iterator;
+
+import static Utils.Serializer.deserialize;
+import static Utils.metaFile.generateMetaDataFile;
+import static Utils.metaFile.appendOnMetaDataFile;
+
+import static Utils.Serializer.serialize;
 
 public class DBApp {
 
@@ -29,31 +38,39 @@ public class DBApp {
 	// type as value
 	public void createTable(String strTableName, 
 							String strClusteringKeyColumn,  
-							Hashtable<String,String> htblColNameType) throws DBAppException{
-
-		throw new DBAppException("not implemented yet");
+							Hashtable<String,String> htblColNameType){
+		try{
+			File file = new File("DB/"+strTableName+".class");
+			if (file.exists()){
+				throw new DBAppException("Table already exists");
+			}
+			Table newTable = new Table(strTableName, strClusteringKeyColumn, htblColNameType);
+			appendOnMetaDataFile(strTableName,strClusteringKeyColumn,htblColNameType);
+			serialize(newTable,strTableName);
+		} catch (Exception e){
+			System.out.println(e.getMessage());
+		}
 	}
 
 
 	// following method creates a B+tree index 
 	public void createIndex(String   strTableName,
 							String   strColName,
-							String   strIndexName){
-		try{
-			updateOnMetaDataFile(strTableName,strColName,strIndexName,"B+tree");
-		} catch (Exception e){
-			System.out.println(e.getMessage());
-		}
+							String   strIndexName) throws DBAppException{
 
+		throw new DBAppException("not implemented yet");
 	}
 
 
 	// following method inserts one row only. 
 	// htblColNameValue must include a value for the primary key
 	public void insertIntoTable(String strTableName, 
-								Hashtable<String,Object>  htblColNameValue) throws DBAppException{
+								Hashtable<String,Object>  htblColNameValue){
 	
-		throw new DBAppException("not implemented yet");
+		Table myTable = (Table) deserialize(strTableName);
+		myTable.insertTuple(htblColNameValue);
+		serialize(myTable,strTableName);
+		return;
 	}
 
 
@@ -152,6 +169,47 @@ public class DBApp {
 //			exp.printStackTrace( );
 //		}
 
+		DBApp myDB = new DBApp();
+		myDB.init();
+//
+//		Hashtable htblColNameType = new Hashtable( );
+//		htblColNameType.put("id", "java.lang.Integer");
+//		htblColNameType.put("name", "java.lang.String");
+//		htblColNameType.put("gpa", "java.lang.double");
+//		myDB.createTable( "First_Test", "id", htblColNameType );
+//
+//		Hashtable htblColNameValue = new Hashtable( );
+//		htblColNameValue.put("id", 2343432 );
+//		htblColNameValue.put("name", "Ahmed Noor");
+//		htblColNameValue.put("gpa", 0.95 );
+//		myDB.insertIntoTable( "First_Test" , htblColNameValue );
+//
+//		htblColNameValue.clear( );
+//		htblColNameValue.put("id", 453455 );
+//		htblColNameValue.put("name", "Ahmed Noor");
+//		htblColNameValue.put("gpa", 0.95);
+//		myDB.insertIntoTable( "First_Test" , htblColNameValue );
+//
+//		htblColNameValue.clear( );
+//		htblColNameValue.put("id", 5674567 );
+//		htblColNameValue.put("name", "Dalia Noor");
+//		htblColNameValue.put("gpa", 1.25 );
+//		myDB.insertIntoTable( "First_Test" , htblColNameValue );
+//
+//		htblColNameValue.clear( );
+//		htblColNameValue.put("id", 23498 );
+//		htblColNameValue.put("name", "John Noor");
+//		htblColNameValue.put("gpa",  1.5 );
+//		myDB.insertIntoTable( "First_Test" , htblColNameValue );
+//
+//		htblColNameValue.clear( );
+//		htblColNameValue.put("id",  78452 );
+//		htblColNameValue.put("name", "Zaky Noor");
+//		htblColNameValue.put("gpa",  0.88 );
+//		myDB.insertIntoTable( "First_Test" , htblColNameValue );
+
+		Table first_test = (Table) deserialize("First_Test");
+		System.out.println(first_test);
 	}
 
 }

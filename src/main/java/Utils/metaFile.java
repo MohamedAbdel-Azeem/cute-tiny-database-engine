@@ -30,6 +30,7 @@ public class metaFile {
     }
 
     public static void appendOnMetaDataFile(String strTableName, String strClusteringKeyColumn, Hashtable<String,String> htblColNameType){
+        System.out.println("Appending to metadata file");
         String path = "./DB/metadata.csv";
         Iterator<Map.Entry<String, String>> iterator = htblColNameType.entrySet().iterator();
 
@@ -89,7 +90,6 @@ public class metaFile {
         }
 
     }
-
 
 
 
