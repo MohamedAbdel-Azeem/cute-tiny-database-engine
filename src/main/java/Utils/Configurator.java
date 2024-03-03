@@ -7,7 +7,7 @@ public class Configurator {
 
     public static Properties readFile(){
         Properties properties = new Properties();
-        try (FileInputStream input = new FileInputStream("src/main/resources/DBMain.DBApp.config")) {
+        try (FileInputStream input = new FileInputStream("src/main/resources/DBApp.config")) {
             properties.load(input);
         } catch (IOException e) {
             e.printStackTrace();

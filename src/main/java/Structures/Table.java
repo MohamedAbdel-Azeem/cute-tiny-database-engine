@@ -8,21 +8,20 @@ import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.Vector;
 
+import static Utils.Serializer.deserialize;
+
 public class Table {
     private String tableName;
     private String ClusteringKeyColumn;
     private Hashtable<String, String> colNmTypes;
-    private Vector<Page> pages;
-
-    private HashSet primaryKeys;
+    private Vector<String> pageNames;
 
 
     public Table(String tableName, String clusteringKeyColumn, Hashtable<String, String> colNameType) {
         this.tableName = tableName;
         this.ClusteringKeyColumn = clusteringKeyColumn;
         this.colNmTypes = colNameType;
-        this.pages = new Vector<Page>();
-        this.primaryKeys = new HashSet();
+        this.pageNames = new Vector<String>();
     }
 
     public void insertTuple(Hashtable<String,Object> htblColNameValue){
@@ -31,30 +30,32 @@ public class Table {
         }
         HashMap<String,Object> values = new HashMap<String,Object>(htblColNameValue);
         Tuple tuple = new Tuple(values);
-        if (pages.isEmpty()){
+        if (pageNames.isEmpty()){
             Page page = new Page();
             page.addTuple(tuple);
-            pages.add(page);
-            Serializer.serialize(page,tableName+pages.size());
+            String pageName = tableName+pageNames.size();
+            Serializer.serialize(page,pageName);
+            pageNames.add(pageName);
             return;
         } else {
-            for (int i = 0; i < pages.size(); i++){ // Handles the 2 Cases of the Page being Not Full and a Page being not full
-                Page currPage = pages.get(i);
-                if (!currPage.isFull()){
+            for (int i = 0; i < pageNames.size(); i++){ // Handles the 2 Cases of the Page being Not Full and a Page being full not until last pag
+                Page currPage = deserialize(pageNames.get(i));
+                if (! currPage.isFull()){
                     currPage.addTuple(tuple);
-                    Serializer.serialize(currPage,tableName+(i+1));
+                    Serializer.serialize(currPage,pageNames.get(i));
                     return;
                 } else {
                     Tuple newTuple = currPage.getTuples().removeLast();
                     currPage.addTuple(tuple);
-                    Serializer.serialize(currPage,tableName+(i+1));
+                    Serializer.serialize(currPage,pageNames.get(i));
                     tuple = newTuple;
                 }
             }
             Page newPage = new Page(); // in Case all the Pages were full till the last page create a new page
             newPage.addTuple(tuple);
-            pages.add(newPage);
-            Serializer.serialize(newPage,tableName+pages.size());
+            String pageName = tableName+pageNames.size();
+            pageNames.add(pageName);
+            Serializer.serialize(newPage,pageName);
             return;
         }
     }
@@ -64,7 +65,13 @@ public class Table {
     }
 
     public String toString(){
-        return pages.toString();
+        StringBuilder sb = new StringBuilder();
+        sb.append("-------- Table Name: ").append(tableName).append("-------------\n");
+        for (String pageName : pageNames){
+            Page page = deserialize(pageName);
+            sb.append(page.toString());
+        }
+        return sb.toString();
     }
 
     public static void main(String[] args) {
@@ -72,7 +79,7 @@ public class Table {
         Hashtable<String, String> colNameType = new Hashtable<>();
         colNameType.put("column1", "String");
         colNameType.put("column2", "Integer");
-        Table table = new Table("tableName", "ClusteringKeyColumn", colNameType);
+        Table table = new Table("test", "ClusteringKeyColumn", colNameType);
 
 // Insert tuples into the table for testing
         Hashtable<String, Object> tuple1 = new Hashtable<>();
@@ -94,6 +101,7 @@ public class Table {
         tuple4.put("column2", 400);
         table.insertTuple(tuple4);
         System.out.println(table);
+
     }
 
 

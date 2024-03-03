@@ -16,6 +16,7 @@ public class Page implements Serializable {
     }
 
     public boolean isFull(){
+        System.out.println("Page Size: "+tuples.size() + " Max Size: "+maxNumOfRows);
         return tuples.size() == maxNumOfRows;
     }
 
@@ -28,7 +29,11 @@ public class Page implements Serializable {
     }
 
     public String toString(){
-        return tuples.toString();
+        StringBuilder sb = new StringBuilder();
+        for (Tuple tuple : tuples){
+            sb.append(tuple.toString());
+        }
+        return sb.toString();
     }
 
 

@@ -27,7 +27,7 @@ public class Tuple implements Serializable {
         if (!values.isEmpty()) {
             sb.deleteCharAt(sb.length() - 1);
         }
-        return sb.toString();
+        return sb.toString() + "\n";
     }
 
 }
