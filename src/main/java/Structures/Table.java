@@ -2,6 +2,7 @@ package Structures;
 
 import Utils.Serializer;
 
+import java.io.Serializable;
 import java.lang.reflect.Parameter;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -10,7 +11,7 @@ import java.util.Vector;
 
 import static Utils.Serializer.deserialize;
 
-public class Table {
+public class Table implements Serializable {
     private String tableName;
     private String ClusteringKeyColumn;
     private Hashtable<String, String> colNmTypes;
@@ -39,7 +40,7 @@ public class Table {
             return;
         } else {
             for (int i = 0; i < pageNames.size(); i++){ // Handles the 2 Cases of the Page being Not Full and a Page being full not until last pag
-                Page currPage = deserialize(pageNames.get(i));
+                Page currPage = (Page) deserialize(pageNames.get(i));
                 if (! currPage.isFull()){
                     currPage.addTuple(tuple);
                     Serializer.serialize(currPage,pageNames.get(i));
@@ -68,7 +69,7 @@ public class Table {
         StringBuilder sb = new StringBuilder();
         sb.append("-------- Table Name: ").append(tableName).append("-------------\n");
         for (String pageName : pageNames){
-            Page page = deserialize(pageName);
+            Page page = (Page) deserialize(pageName);
             sb.append(page.toString());
         }
         return sb.toString();

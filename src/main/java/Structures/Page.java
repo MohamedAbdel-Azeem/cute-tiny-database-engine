@@ -16,7 +16,6 @@ public class Page implements Serializable {
     }
 
     public boolean isFull(){
-        System.out.println("Page Size: "+tuples.size() + " Max Size: "+maxNumOfRows);
         return tuples.size() == maxNumOfRows;
     }
 

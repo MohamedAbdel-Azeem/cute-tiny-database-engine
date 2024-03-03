@@ -2,13 +2,10 @@ package Utils;
 
 import Structures.Page;
 
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
+import java.io.*;
 
 public class Serializer {
-    public static void serialize(Page page, String fileName) {
+    public static void serialize(Serializable object, String fileName) {
         try {
             //you may also write this verbosely as
             // FileOutputStream fileOutputStream = new FileOutputStream(fileName);
@@ -16,7 +13,7 @@ public class Serializer {
 
             var objOutputStream = new ObjectOutputStream(fileOutputStream);
 
-            objOutputStream.writeObject(page);
+            objOutputStream.writeObject(object);
             //we don't want a memory leak if we can avoid it
             fileOutputStream.close();
             objOutputStream.close();
@@ -27,8 +24,8 @@ public class Serializer {
 
     }
 
-    public static Page deserialize(String fileName) {
-        Page page = null;
+    public static Object deserialize(String fileName) {
+        Object object = null;
 
         try {
             //could be written as
@@ -38,7 +35,7 @@ public class Serializer {
             var objectInputStream = new ObjectInputStream(fileInputStream);
 
             //read the binary file
-            page = (Page) objectInputStream.readObject();
+            object = objectInputStream.readObject();
 
             objectInputStream.close();
             fileInputStream.close();
@@ -47,7 +44,7 @@ public class Serializer {
             e.printStackTrace();
         }
 
-        return page;
+        return object;
     }
 
 }
