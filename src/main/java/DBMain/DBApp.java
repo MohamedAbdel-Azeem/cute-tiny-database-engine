@@ -208,8 +208,8 @@ public class DBApp {
 //		htblColNameValue.put("gpa",  0.88 );
 //		myDB.insertIntoTable( "First_Test" , htblColNameValue );
 
-		Table first_test = (Table) deserialize("First_Test");
-		System.out.println(first_test);
+//		Table first_test = (Table) deserialize("First_Test");
+//		System.out.println(first_test);
 	}
 
 }
