@@ -3,7 +3,7 @@ package DBMain;
 
 import Structures.Table;
 
-
+import java.lang.reflect.*;
 import java.io.File;
 import java.util.Hashtable;
 import java.util.Iterator;
@@ -13,7 +13,7 @@ import static Utils.metaFile.generateMetaDataFile;
 import static Utils.metaFile.appendOnMetaDataFile;
 
 import static Utils.Serializer.serialize;
-
+class A {}
 public class DBApp {
 
 
@@ -169,8 +169,19 @@ public class DBApp {
 //			exp.printStackTrace( );
 //		}
 
-		DBApp myDB = new DBApp();
-		myDB.init();
+//		DBApp myDB = new DBApp();
+//		myDB.init();
+		try {
+			Class cls = Class.forName("java.lang.String");
+			boolean b1
+					= cls.isInstance("hello");
+			System.out.println(b1);
+//			boolean b2 = cls.isInstance(new A());
+//			System.out.println(b2);
+		}
+		catch (Throwable e) {
+			System.err.println(e);
+		}
 //
 //		Hashtable htblColNameType = new Hashtable( );
 //		htblColNameType.put("id", "java.lang.Integer");
@@ -208,8 +219,8 @@ public class DBApp {
 //		htblColNameValue.put("gpa",  0.88 );
 //		myDB.insertIntoTable( "First_Test" , htblColNameValue );
 
-		Table first_test = (Table) deserialize("First_Test");
-		System.out.println(first_test);
+//		Table first_test = (Table) deserialize("First_Test");
+//		System.out.println(first_test);
 	}
 
 }

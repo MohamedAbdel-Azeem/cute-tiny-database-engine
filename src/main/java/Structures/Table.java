@@ -3,9 +3,8 @@ package Structures;
 import Utils.Serializer;
 
 import java.io.Serializable;
-import java.lang.reflect.Parameter;
+import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.Vector;
 
@@ -14,7 +13,7 @@ import static Utils.Serializer.deserialize;
 public class Table implements Serializable {
     private String tableName;
     private String ClusteringKeyColumn;
-    private Hashtable<String, String> colNmTypes;
+    private transient Hashtable<String, String> colNmTypes;
     private Vector<String> pageNames;
 
 
@@ -26,7 +25,7 @@ public class Table implements Serializable {
     }
 
     public void insertTuple(Hashtable<String,Object> htblColNameValue){
-        if (! isValid(htblColNameValue)){
+        if (! isValid(htblColNameValue,this.tableName)){
             return;
         }
         HashMap<String,Object> values = new HashMap<String,Object>(htblColNameValue);
@@ -63,8 +62,28 @@ public class Table implements Serializable {
 
     // Check Column Types
     // Check Uniqueness of Primary Key
-    public static boolean isValid(Hashtable<String,Object> htblColNameValue){ // Check Data Types and Uniqueness of Primary Key
+    public static boolean isValid(Hashtable<String,Object> htblColNameValue, String tableName) throws ClassNotFoundException { // Check Data Types and Uniqueness of Primary Key
+            Hashtable<String,String> ColDataTypes= extractTblCols(tableName);
+            ArrayList<String> colname = (ArrayList<String>) htblColNameValue.keys();
+            boolean flag=true;
+            // check for correct data types
+            for(int i=0;i<colname.size();i++){
+                Object value=htblColNameValue.get(colname.get(i));
+                String type=ColDataTypes.get(colname.get(i));
+                Class cls = Class.forName(type);
+                flag=flag&&cls.isInstance(value);}
+
+
+
+
+
+
+
         return true;
+    }
+
+    private static Hashtable<String, String> extractTblCols(String tableName) {
+        return null;
     }
 
     public String toString(){
