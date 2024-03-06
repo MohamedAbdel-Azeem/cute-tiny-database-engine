@@ -11,9 +11,9 @@ import DBMain.DBAppException;
 
 public class metaFile {
 
-    public static String metaPath = "./DB/metaFile.txt";
+    public static String metaPath = "./DB/metadata.csv";
     public static void generateMetaDataFile() {
-        File file = new File("./DB/metadata.csv");
+        File file = new File(metaPath);
         if (file.exists()) {
             return;
         } else {
@@ -31,14 +31,13 @@ public class metaFile {
 
     public static void appendOnMetaDataFile(String strTableName, String strClusteringKeyColumn, Hashtable<String,String> htblColNameType){
         System.out.println("Appending to metadata file");
-        String path = "./DB/metadata.csv";
         Iterator<Map.Entry<String, String>> iterator = htblColNameType.entrySet().iterator();
 
         while (iterator.hasNext()) {
             Map.Entry<String, String> entry = iterator.next();
             String isClusteringKey = (strClusteringKeyColumn.equals(entry.getKey())) ? "true" : "false";
             String line =  strTableName + "," + entry.getKey() + "," + entry.getValue() + "," + isClusteringKey + ",null,null" + "\n";
-            try (BufferedWriter writer = new BufferedWriter(new FileWriter(path, true))) {
+            try (BufferedWriter writer = new BufferedWriter(new FileWriter(metaPath, true))) {
                 writer.write(line);
             } catch (IOException e) {
                 System.err.println("Error appending to the CSV file: " + e.getMessage());
@@ -48,11 +47,10 @@ public class metaFile {
     }
 
     public static void updateOnMetaDataFile(String inputStrTableName, String inputColName, String inputIndexName, String inputIndexType) throws Exception {
-        String path = "./DB/metadata.csv";
         String newCsvContent="";
         boolean found = false;
         try (
-                Reader reader = new FileReader(path);
+                Reader reader = new FileReader(metaPath);
                 CSVParser csvParser = new CSVParser(reader, CSVFormat.DEFAULT.withHeader());
         ) {
             // Read existing records and put them inside an ArrayList
@@ -82,7 +80,7 @@ public class metaFile {
         }
 
         try (
-                Writer writer = new FileWriter(path); // Append mode to prevent overwriting existing data
+                Writer writer = new FileWriter(metaPath); // Append mode to prevent overwriting existing data
             ){
             writer.write(newCsvContent);
         } catch (IOException e) {
@@ -91,15 +89,37 @@ public class metaFile {
 
     }
 
+    public static Hashtable<String,String> extractTblCols(String strTableName){
+        Hashtable<String,String> htblColNameType = new Hashtable<>();
+        try (
+                Reader reader = new FileReader(metaPath);
+                CSVParser csvParser = new CSVParser(reader, CSVFormat.DEFAULT.withHeader());
+        ) {
+            boolean isFound = false;
+            for (CSVRecord csvRecord : csvParser) {
+                String tableName = csvRecord.get("Table Name");
+                if (isFound && ! tableName.equals(strTableName)){
+                    return htblColNameType;
+                }
+                if (tableName.equals(strTableName)){
+                    isFound = true;
+                    String columnName = csvRecord.get("Column Name");
+                    String columnType = csvRecord.get("Column Type");
+                    htblColNameType.put(columnName, columnType);
+                }
+            }
+            return htblColNameType;
+        } catch (Exception e){
+            System.out.println(e.getMessage());
+            return null;
+        }
+    }
 
 
 
     public static void main(String[] args) {
-//        Hashtable<String, String> colNameType = new Hashtable<>();
-//        colNameType.put("name", "String");
-//        colNameType.put("age", "Integer");
-//        appendOnMetaDataFile("table2", "name", colNameType);
-//        updateOnMetaDataFile("table2", "age", "ageIndex", "B+Tree");
+        Hashtable<String,String> htblColNameType = extractTblCols("First_Test");
+        System.out.println(htblColNameType);
     }
 
 
