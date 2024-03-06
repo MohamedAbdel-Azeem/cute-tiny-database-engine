@@ -3,7 +3,7 @@ package DBMain;
 
 import Structures.Table;
 
-
+import java.lang.reflect.*;
 import java.io.File;
 import java.util.Hashtable;
 import java.util.Iterator;
@@ -13,7 +13,7 @@ import static Utils.metaFile.generateMetaDataFile;
 import static Utils.metaFile.appendOnMetaDataFile;
 
 import static Utils.Serializer.serialize;
-
+class A {}
 public class DBApp {
 
 
@@ -44,7 +44,7 @@ public class DBApp {
 			if (file.exists()){
 				throw new DBAppException("Table already exists");
 			}
-			Table newTable = new Table(strTableName, strClusteringKeyColumn, htblColNameType);
+			Table newTable = new Table(strTableName, strClusteringKeyColumn);
 			appendOnMetaDataFile(strTableName,strClusteringKeyColumn,htblColNameType);
 			serialize(newTable,strTableName);
 		} catch (Exception e){
@@ -65,7 +65,7 @@ public class DBApp {
 	// following method inserts one row only. 
 	// htblColNameValue must include a value for the primary key
 	public void insertIntoTable(String strTableName, 
-								Hashtable<String,Object>  htblColNameValue){
+								Hashtable<String,Object>  htblColNameValue)  {
 	
 		Table myTable = (Table) deserialize(strTableName);
 		myTable.insertTuple(htblColNameValue);
@@ -104,7 +104,7 @@ public class DBApp {
 	}
 
 
-	public static void main( String[] args ){
+	public static void main( String[] args )  {
 
 //	try{
 //			String strTableName = "Student";
@@ -169,47 +169,62 @@ public class DBApp {
 //			exp.printStackTrace( );
 //		}
 
+//		DBApp myDB = new DBApp();
+//		myDB.init();
+//		try {
+//			Class cls = Class.forName("java.lang.String");
+//			boolean b1
+//					= cls.isInstance("hello");
+//			System.out.println(b1);
+////			boolean b2 = cls.isInstance(new A());
+////			System.out.println(b2);
+//		}
+//		catch (Throwable e) {
+//			System.err.println(e);
+//		}
+//
+
 		DBApp myDB = new DBApp();
 		myDB.init();
-//
-//		Hashtable htblColNameType = new Hashtable( );
-//		htblColNameType.put("id", "java.lang.Integer");
-//		htblColNameType.put("name", "java.lang.String");
-//		htblColNameType.put("gpa", "java.lang.double");
-//		myDB.createTable( "First_Test", "id", htblColNameType );
-//
-//		Hashtable htblColNameValue = new Hashtable( );
-//		htblColNameValue.put("id", 2343432 );
-//		htblColNameValue.put("name", "Ahmed Noor");
-//		htblColNameValue.put("gpa", 0.95 );
-//		myDB.insertIntoTable( "First_Test" , htblColNameValue );
-//
-//		htblColNameValue.clear( );
-//		htblColNameValue.put("id", 453455 );
-//		htblColNameValue.put("name", "Ahmed Noor");
-//		htblColNameValue.put("gpa", 0.95);
-//		myDB.insertIntoTable( "First_Test" , htblColNameValue );
-//
-//		htblColNameValue.clear( );
-//		htblColNameValue.put("id", 5674567 );
-//		htblColNameValue.put("name", "Dalia Noor");
-//		htblColNameValue.put("gpa", 1.25 );
-//		myDB.insertIntoTable( "First_Test" , htblColNameValue );
-//
-//		htblColNameValue.clear( );
-//		htblColNameValue.put("id", 23498 );
-//		htblColNameValue.put("name", "John Noor");
-//		htblColNameValue.put("gpa",  1.5 );
-//		myDB.insertIntoTable( "First_Test" , htblColNameValue );
-//
-//		htblColNameValue.clear( );
-//		htblColNameValue.put("id",  78452 );
-//		htblColNameValue.put("name", "Zaky Noor");
-//		htblColNameValue.put("gpa",  0.88 );
-//		myDB.insertIntoTable( "First_Test" , htblColNameValue );
+		Hashtable htblColNameType = new Hashtable( );
+		htblColNameType.put("id", "java.lang.Integer");
+		htblColNameType.put("name", "java.lang.String");
+		htblColNameType.put("gpa", "java.lang.Double");
+		myDB.createTable( "First_Test", "id", htblColNameType );
 
-//		Table first_test = (Table) deserialize("First_Test");
+		Hashtable htblColNameValue = new Hashtable( );
+		htblColNameValue.put("id", 2343432 );
+		htblColNameValue.put("name", "Abd el satar");
+		htblColNameValue.put("gpa", 0.95 );
+		myDB.insertIntoTable( "First_Test" , htblColNameValue );
+
+		htblColNameValue.clear( );
+		htblColNameValue.put("id", 453455 );
+		htblColNameValue.put("name", "Ahmed Noor");
+		htblColNameValue.put("gpa", 0.95);
+		myDB.insertIntoTable( "First_Test" , htblColNameValue );
+
+		htblColNameValue.clear( );
+		htblColNameValue.put("id", 5674567 );
+		htblColNameValue.put("name", "Dalia Noor");
+		htblColNameValue.put("gpa", 1.25 );
+		myDB.insertIntoTable( "First_Test" , htblColNameValue );
+//
+		htblColNameValue.clear( );
+		htblColNameValue.put("id", 23498 );
+		htblColNameValue.put("name", "John Noor");
+		htblColNameValue.put("gpa",  "kk" );
+		myDB.insertIntoTable( "First_Test" , htblColNameValue );
+
+		htblColNameValue.clear( );
+		htblColNameValue.put("id",  45345 );
+		htblColNameValue.put("name", "Zaky Noor");
+		htblColNameValue.put("gpa",  0.88 );
+		myDB.insertIntoTable( "First_Test" , htblColNameValue );
+
+		Table first_test = (Table) deserialize("First_Test");
 //		System.out.println(first_test);
+
 	}
 
 }
