@@ -1,4 +1,4 @@
 Table Name,Column Name,Column Type,ClusteringKey,IndexName,IndexType
-First_Test,gpa,java.lang.double,false,null,null
+First_Test,gpa,java.lang.Double,false,null,null
 First_Test,name,java.lang.String,false,null,null
 First_Test,id,java.lang.Integer,true,null,null
