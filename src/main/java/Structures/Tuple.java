@@ -1,5 +1,7 @@
 package Structures;
 
+import DBMain.SQLTerm;
+
 import java.io.Serializable;
 import java.util.HashMap;
 
@@ -17,6 +19,18 @@ public class Tuple implements Serializable {
         values.put(columnName, value);
     }
 
+    public boolean satisfySQLTerm(String strColName , String Operator , Object comparingObject){
+        switch (Operator){
+            case ">": return ((Comparable)values.get(strColName)).compareTo(comparingObject) > 0;
+            case "<": return ((Comparable)values.get(strColName)).compareTo(comparingObject) < 0;
+            case "=": return ((Comparable)values.get(strColName)).compareTo(comparingObject) == 0;
+            case ">=": return ((Comparable)values.get(strColName)).compareTo(comparingObject) >= 0;
+            case "<=": return ((Comparable)values.get(strColName)).compareTo(comparingObject) <= 0;
+            case "!=": return ((Comparable)values.get(strColName)).compareTo(comparingObject) != 0;
+            default: return false;
+        }
+    }
+
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
@@ -30,4 +44,13 @@ public class Tuple implements Serializable {
         return sb.toString() + "\n";
     }
 
+
+    public static void main(String[] args) {
+        HashMap<String, Object> values = new HashMap<>();
+        values.put("a", 1);
+        values.put("b", 2);
+        Tuple tuple = new Tuple(values);
+        System.out.println(tuple.satisfySQLTerm("a", "!=", 2));
+
+    }
 }
