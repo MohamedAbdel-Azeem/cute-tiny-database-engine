@@ -44,13 +44,4 @@ public class Tuple implements Serializable {
         return sb.toString() + "\n";
     }
 
-
-    public static void main(String[] args) {
-        HashMap<String, Object> values = new HashMap<>();
-        values.put("a", 1);
-        values.put("b", 2);
-        Tuple tuple = new Tuple(values);
-        System.out.println(tuple.satisfySQLTerm("a", "!=", 2));
-
-    }
 }
