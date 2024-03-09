@@ -106,6 +106,9 @@ public class Table implements Serializable {
     }
 
 
+    public Vector<String> getPageNames() {
+        return pageNames;
+    }
 
 
 }
