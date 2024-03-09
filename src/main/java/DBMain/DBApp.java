@@ -13,7 +13,7 @@ import static Utils.metaFile.generateMetaDataFile;
 import static Utils.metaFile.appendOnMetaDataFile;
 
 import static Utils.Serializer.serialize;
-class A {}
+
 public class DBApp {
 
 

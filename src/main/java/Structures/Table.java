@@ -29,8 +29,7 @@ public class Table implements Serializable {
         if (! this.isValid(htblColNameValue)){
             return;
         }
-        HashMap<String,Object> values = new HashMap<String,Object>(htblColNameValue);
-        Tuple tuple = new Tuple(values);
+        Tuple tuple = new Tuple(htblColNameValue);
         if (pageNames.isEmpty()){
             Page page = new Page();
             page.addTuple(tuple);

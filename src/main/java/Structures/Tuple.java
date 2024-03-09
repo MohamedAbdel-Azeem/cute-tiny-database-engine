@@ -4,11 +4,12 @@ import DBMain.SQLTerm;
 
 import java.io.Serializable;
 import java.util.HashMap;
+import java.util.Hashtable;
 
 public class Tuple implements Serializable {
-    private HashMap<String,Object> values;
+    private Hashtable<String,Object> values;
 
-    public Tuple(HashMap<String,Object> values){
+    public Tuple(Hashtable<String,Object> values){
         this.values = values;
     }
     public Object getValue(String columnName) {
