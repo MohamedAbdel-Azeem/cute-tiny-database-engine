@@ -1,14 +1,15 @@
 package Structures;
 
 import Utils.Serializer;
+import Utils.bplustree;
+import Utils.metaFile;
 
 import java.io.Serializable;
 import java.util.*;
 
-import static Utils.metaFile.extractTblCols;
-
 import static Utils.Serializer.deserialize;
-import static Utils.metaFile.metaPath;
+import static Utils.metaFile.extractTblCols;
+import static Utils.metaFile.wasIndexMade;
 
 public class Table implements Serializable {
     private String tableName;
@@ -31,6 +32,14 @@ public class Table implements Serializable {
         }
         HashMap<String,Object> values = new HashMap<String,Object>(htblColNameValue);
         Tuple tuple = new Tuple(values);
+        Hashtable<String, String> tablenames=extractTblCols(this.tableName);
+        Hashtable<String,String> indexedCols=wasIndexMade(this.tableName);
+        boolean flag=false;
+        if(indexedCols != null){
+            flag=true;
+
+        }
+
         if (pageNames.isEmpty()){
             Page page = new Page();
             page.addTuple(tuple);
@@ -95,7 +104,21 @@ public class Table implements Serializable {
             return  true;
     }
 
+  private void insertIntoTree(Comparable key,String indexId,String pageName){
 
+        bplustree bp= (bplustree) Serializer.deserialize(indexId);
+      if(bp.search(key)!=null){
+          HashSet<String> hashSet1=bp.search(key);
+          hashSet1.add(pageName);
+      }
+      else{
+          HashSet<String> hashSet=new HashSet<String>();
+          hashSet.add(pageName);
+          bp.insert(key,hashSet);
+      }
+      Serializer.serialize(bp,indexId);
+
+  }
     public String toString(){
         StringBuilder sb = new StringBuilder();
         sb.append("-------- Table Name: ").append(tableName).append("-------------\n");
@@ -107,6 +130,7 @@ public class Table implements Serializable {
     }
 
 
+    public void deleteTuple(Hashtable<String, Object> htblColNameValue) {
 
-
+    }
 }

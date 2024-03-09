@@ -3,17 +3,19 @@ package DBMain;
 
 import Structures.Table;
 
-import java.lang.reflect.*;
 import java.io.File;
+import java.io.Serializable;
+import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.Iterator;
 
 import static Utils.Serializer.deserialize;
-import static Utils.metaFile.generateMetaDataFile;
-import static Utils.metaFile.appendOnMetaDataFile;
 
 import static Utils.Serializer.serialize;
-class A {}
+import static Utils.metaFile.*;
+
+import Utils.Serializer;
+import Utils.bplustree;
 public class DBApp {
 
 
@@ -57,8 +59,18 @@ public class DBApp {
 	public void createIndex(String   strTableName,
 							String   strColName,
 							String   strIndexName) throws DBAppException{
+		// check if index with that name
+		// check there does not index in that column and
+		//check if already data exists reinsert them in bplus tree
+		// there does not create bplus tree then serialize it and update metafile
+		String path= "./DB/"+strIndexName+".class.";
+		File file =new File(path);
 
-		throw new DBAppException("not implemented yet");
+			if (file.exists()) {
+				throw new DBAppException("There already exists an index with that name");
+		}
+			if(wasIndexMade(strTableName).containsKey(strColName))
+				throw new DBAppException("There already exists an index for that column");
 	}
 
 
@@ -92,7 +104,12 @@ public class DBApp {
 	// htblColNameValue enteries are ANDED together
 	public void deleteFromTable(String strTableName, 
 								Hashtable<String,Object> htblColNameValue) throws DBAppException{
-	
+
+		Table myTable = (Table) deserialize(strTableName);
+		myTable.deleteTuple(htblColNameValue);
+		serialize(myTable,strTableName);
+
+
 		throw new DBAppException("not implemented yet");
 	}
 
@@ -186,43 +203,80 @@ public class DBApp {
 
 		DBApp myDB = new DBApp();
 		myDB.init();
-		Hashtable htblColNameType = new Hashtable( );
-		htblColNameType.put("id", "java.lang.Integer");
-		htblColNameType.put("name", "java.lang.String");
-		htblColNameType.put("gpa", "java.lang.Double");
-		myDB.createTable( "First_Test", "id", htblColNameType );
-
-		Hashtable htblColNameValue = new Hashtable( );
-		htblColNameValue.put("id", 2343432 );
-		htblColNameValue.put("name", "Abd el satar");
-		htblColNameValue.put("gpa", 0.95 );
-		myDB.insertIntoTable( "First_Test" , htblColNameValue );
-
-		htblColNameValue.clear( );
-		htblColNameValue.put("id", 453455 );
-		htblColNameValue.put("name", "Ahmed Noor");
-		htblColNameValue.put("gpa", 0.95);
-		myDB.insertIntoTable( "First_Test" , htblColNameValue );
-
-		htblColNameValue.clear( );
-		htblColNameValue.put("id", 5674567 );
-		htblColNameValue.put("name", "Dalia Noor");
-		htblColNameValue.put("gpa", 1.25 );
-		myDB.insertIntoTable( "First_Test" , htblColNameValue );
+//		BPlusTree<Long, String> tree =
+//				BPlusTree
+//						.file()
+//						.directory("./DB/")
+//						.maxLeafKeys(32)
+//						.maxNonLeafKeys(8)
+//						.segmentSizeMB(1)
+//						.keySerializer(Serializer.LONG)
+//						.valueSerializer(Serializer.utf8())
+//						.naturalOrder();
 //
-		htblColNameValue.clear( );
-		htblColNameValue.put("id", 23498 );
-		htblColNameValue.put("name", "John Noor");
-		htblColNameValue.put("gpa",  "kk" );
-		myDB.insertIntoTable( "First_Test" , htblColNameValue );
+//// insert some values
+//		tree.insert(1000L, "hello");
+//		tree.insert(2000L, "there");
+//
+//// search the tree for values with keys between 0 and 3000
+//// and print out key value pairs
+//		tree.findEntries(0L, 3000L).forEach(entry -> System.out.println(entry));
+//		bplustree bp=new bplustree(3);
+//		HashSet<String> hashSet=new HashSet<String>();
+//		hashSet.add("page1");
+//		bp.insert(3,hashSet);
+////		Serializer.serialize(bp,"trial");
+		bplustree bp= (bplustree) Serializer.deserialize("trial");
+//		HashSet<String> hashSet=new HashSet<String>();
+//		hashSet.add("page3");
+		if(bp.search(3)!=null){
+			HashSet<String> hashSet1=bp.search(3);
+			hashSet1.add("page5");
+//			bp.insert(3,hashSet1);
+		}
+		System.out.println(bp.search(3));
 
-		htblColNameValue.clear( );
-		htblColNameValue.put("id",  45345 );
-		htblColNameValue.put("name", "Zaky Noor");
-		htblColNameValue.put("gpa",  0.88 );
-		myDB.insertIntoTable( "First_Test" , htblColNameValue );
 
-		Table first_test = (Table) deserialize("First_Test");
+// search the tree for values with keys between 0 and 3000
+// and print out values only
+		//tree.find(0L,3000L).forEach(entry -> System.out.println(entry));
+//		Hashtable htblColNameType = new Hashtable( );
+//		htblColNameType.put("id", "java.lang.Integer");
+//		htblColNameType.put("name", "java.lang.String");
+//		htblColNameType.put("gpa", "java.lang.Double");
+//		myDB.createTable( "First_Test", "id", htblColNameType );
+//
+//		Hashtable htblColNameValue = new Hashtable( );
+//		htblColNameValue.put("id", 2343432 );
+//		htblColNameValue.put("name", "Abd el satar");
+//		htblColNameValue.put("gpa", 0.95 );
+//		myDB.insertIntoTable( "First_Test" , htblColNameValue );
+//
+//		htblColNameValue.clear( );
+//		htblColNameValue.put("id", 453455 );
+//		htblColNameValue.put("name", "Ahmed Noor");
+//		htblColNameValue.put("gpa", 0.95);
+//		myDB.insertIntoTable( "First_Test" , htblColNameValue );
+//
+//		htblColNameValue.clear( );
+//		htblColNameValue.put("id", 5674567 );
+//		htblColNameValue.put("name", "Dalia Noor");
+//		htblColNameValue.put("gpa", 1.25 );
+//		myDB.insertIntoTable( "First_Test" , htblColNameValue );
+////
+//		htblColNameValue.clear( );
+//		htblColNameValue.put("id", 23498 );
+//		htblColNameValue.put("name", "John Noor");
+//		htblColNameValue.put("gpa",  "kk" );
+//		myDB.insertIntoTable( "First_Test" , htblColNameValue );
+//
+//		htblColNameValue.clear( );
+//		htblColNameValue.put("id",  45345 );
+//		htblColNameValue.put("name", "Zaky Noor");
+//		htblColNameValue.put("gpa",  0.88 );
+//		myDB.insertIntoTable( "First_Test" , htblColNameValue );
+//
+//		Table first_test = (Table) deserialize("First_Test");
 //		System.out.println(first_test);
 
 	}

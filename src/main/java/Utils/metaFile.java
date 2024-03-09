@@ -89,6 +89,7 @@ public class metaFile {
 
     }
 
+    //extract column name and data type
     public static Hashtable<String,String> extractTblCols(String strTableName){
         Hashtable<String,String> htblColNameType = new Hashtable<>();
         try (
@@ -115,7 +116,8 @@ public class metaFile {
         }
     }
 
-    public static boolean wasIndexMade(String strTableName, String strColName){
+    public static Hashtable<String,String> wasIndexMade(String strTableName){
+        Hashtable<String,String> indexNamesPerCol = new Hashtable<>();
         try
             (
                 Reader reader = new FileReader(metaPath);
@@ -125,18 +127,14 @@ public class metaFile {
                 String tableName = csvRecord.get("Table Name");
                 String columnName = csvRecord.get("Column Name");
                 String indexName = csvRecord.get("IndexName");
-                if (tableName.equals(strTableName) && columnName.equals(strColName)){
-                    if (! indexName.equals("null")){
-                        return true;
-                    } else {
-                        return false;
-                    }
+                if (tableName.equals(strTableName) && ! indexName.equals("null")){
+                    indexNamesPerCol.put(columnName,indexName);
                 }
             }
-            return false;
+            return indexNamesPerCol;
         } catch (Exception e){
             System.out.println(e.getMessage());
-            return false;
+            return null;
         }
     }
 
