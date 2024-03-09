@@ -144,8 +144,8 @@ public class DBApp {
 	public static void main( String[] args )  throws DBAppException{
 
 //	try{
-//			String strTableName = "Student";
-//			DBMain.DBApp	dbApp = new DBMain.DBApp( );
+			String strTableName = "Student";
+			DBMain.DBApp	dbApp = new DBMain.DBApp( );
 //
 //			Hashtable htblColNameType = new Hashtable( );
 //			htblColNameType.put("id", "java.lang.Integer");
@@ -153,7 +153,7 @@ public class DBApp {
 //			htblColNameType.put("gpa", "java.lang.double");
 //			dbApp.createTable( strTableName, "id", htblColNameType );
 //			dbApp.createIndex( strTableName, "gpa", "gpaIndex" );
-//
+
 //			Hashtable htblColNameValue = new Hashtable( );
 //			htblColNameValue.put("id", new Integer( 2343432 ));
 //			htblColNameValue.put("name", new String("Ahmed Noor" ) );

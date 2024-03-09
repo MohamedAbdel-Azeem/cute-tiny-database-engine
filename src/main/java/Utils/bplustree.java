@@ -1,5 +1,7 @@
 package Utils;
 
+import Structures.Tuple;
+
 import java.lang.*;
 import java.util.*;
 import java.io.*;
@@ -28,7 +30,7 @@ public class bplustree implements Serializable{
 				return o1.key.compareTo(o2.key);
 			}
 		};
-		HashSet<String> hashset=new HashSet<String>();
+		HashSet<Tuple> hashset=new HashSet<Tuple>();
 		return Arrays.binarySearch(dps, 0, numPairs, new DictionaryPair(t, hashset), c);
 	}
 
@@ -541,7 +543,7 @@ public class bplustree implements Serializable{
 	 * @param key: an integer key to be used in the dictionary pair
 	 * @param value: a floating point number to be used in the dictionary pair
 	 */
-	public void insert(Comparable key, HashSet<String> value){
+	public void insert(Comparable key, HashSet<Tuple> value){
 		if (isEmpty()) {
 
 			/* Flow of execution goes here only when first insert takes place */
@@ -635,7 +637,7 @@ public class bplustree implements Serializable{
 	 * @param key: the key to be searched within the B+ tree
 	 * @return the floating point value associated with the key within the B+ tree
 	 */
-	public HashSet<String> search(Comparable key) {
+	public HashSet<Tuple> search(Comparable key) {
 
 		// If B+ tree is completely empty, simply return null
 		if (isEmpty()) { return null; }
@@ -664,10 +666,10 @@ public class bplustree implements Serializable{
 	 * @return an Vector<Double> that holds all values of dictionary pairs
 	 * whose keys are within the specified range
 	 */
-	public Vector<HashSet<String>> search(Comparable lowerBound, Comparable upperBound) {
+	public Vector<HashSet<Tuple>> search(Comparable lowerBound, Comparable upperBound) {
 
 		// Instantiate Double array to hold values
-		Vector<HashSet<String>> values = new Vector<HashSet<String>>();
+		Vector<HashSet<Tuple>> values = new Vector<>();
 
 		// Iterate through the doubly linked list of leaves
 		LeafNode currNode = this.firstLeaf;
@@ -683,7 +685,7 @@ public class bplustree implements Serializable{
 
 				// Include value if its key fits within the provided range
 				if (lowerBound.compareTo(dp.key)<=0 && dp.key.compareTo(upperBound)<=0) {
-					values.add((HashSet<String>) dp.value);
+					values.add((HashSet<Tuple>) dp.value);
 				}
 			}
 
@@ -1009,14 +1011,14 @@ public class bplustree implements Serializable{
 	 */
 	public class DictionaryPair implements Comparable<DictionaryPair>,Serializable {
 		Comparable key;
-		HashSet<String> value;
+		HashSet<Tuple> value;
 
 		/**
 		 * Constructor
 		 * @param key: the key of the key-value pair
 		 * @param value: the value of the key-value pair
 		 */
-		public DictionaryPair(Comparable key, HashSet<String> value) {
+		public DictionaryPair(Comparable key, HashSet<Tuple> value) {
 			this.key = key;
 			this.value = value;
 		}
@@ -1138,5 +1140,24 @@ public class bplustree implements Serializable{
 //		}
 
 		//System.out.println(bp.firstLeaf.dictionary[0].key);
+		bplustree bp= (bplustree) Serializer.deserialize("5EIR_ISA");
+		System.out.println( bp.search(3));
+
+//		Hashtable htblColNameType = new Hashtable( );
+//		htblColNameType.put("id", "java.lang.Integer");
+//		htblColNameType.put("name", "java.lang.String");
+//		htblColNameType.put("gpa", "java.lang.double");
+//		Hashtable htblColNameValue = new Hashtable( );
+//		htblColNameValue.put("id", new Integer( 2343432 ));
+//		htblColNameValue.put("name", new String("Ahmed Noor" ) );
+//		htblColNameValue.put("gpa", new Double( 0.95 ) );
+//		Tuple t=new Tuple(htblColNameValue);
+//		HashSet<Tuple> hashSet=new HashSet<Tuple>();
+//		hashSet.add(t);
+//		bp.insert(3,hashSet);
+//		Serializer.serialize(bp,"5EIR_ISA");
+
+
+
 	}
 }
