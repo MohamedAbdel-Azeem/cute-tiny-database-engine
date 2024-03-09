@@ -1,21 +1,26 @@
 package DBMain;
 /** * @author Wael Abouelsaadat */
 
+import Structures.Page;
 import Structures.Table;
+import Structures.Tuple;
 
 import java.io.File;
 import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.Iterator;
+import java.util.Vector;
 
 import static Utils.Serializer.deserialize;
 
 import static Utils.Serializer.serialize;
+
 import static Utils.metaFile.*;
 
 import Utils.Serializer;
 import Utils.bplustree;
+
 public class DBApp {
 
 
@@ -40,7 +45,7 @@ public class DBApp {
 	// type as value
 	public void createTable(String strTableName, 
 							String strClusteringKeyColumn,  
-							Hashtable<String,String> htblColNameType){
+							Hashtable<String,String> htblColNameType) throws DBAppException{
 		try{
 			File file = new File("DB/"+strTableName+".class");
 			if (file.exists()){
@@ -76,13 +81,18 @@ public class DBApp {
 
 	// following method inserts one row only. 
 	// htblColNameValue must include a value for the primary key
+
+	// We don't Handle if the table doesn't Exist
 	public void insertIntoTable(String strTableName, 
-								Hashtable<String,Object>  htblColNameValue)  {
-	
-		Table myTable = (Table) deserialize(strTableName);
-		myTable.insertTuple(htblColNameValue);
-		serialize(myTable,strTableName);
-		return;
+								Hashtable<String,Object>  htblColNameValue)  throws DBAppException{
+		try{
+			Table myTable = (Table) deserialize(strTableName);
+			myTable.insertTuple(htblColNameValue);
+			serialize(myTable,strTableName);
+			return;
+		} catch (Exception e){
+			System.out.println("Table doesn't exist");
+		}
 	}
 
 
@@ -104,24 +114,34 @@ public class DBApp {
 	// htblColNameValue enteries are ANDED together
 	public void deleteFromTable(String strTableName, 
 								Hashtable<String,Object> htblColNameValue) throws DBAppException{
-
-		Table myTable = (Table) deserialize(strTableName);
-		myTable.deleteTuple(htblColNameValue);
-		serialize(myTable,strTableName);
-
-
 		throw new DBAppException("not implemented yet");
 	}
 
 
 	public Iterator selectFromTable(SQLTerm[] arrSQLTerms, 
 									String[]  strarrOperators) throws DBAppException{
-										
+		try {
+			// Wild Assumption: All Table names in the arrSQLTerms are the same
+			String strTableName = arrSQLTerms[0]._strTableName;
+			Table myTable = (Table) deserialize(strTableName);
+			Vector<Tuple> result = new Vector<>();
+			for (String pageName : myTable.getPageNames()){
+				Page page = (Page) deserialize(pageName);
+				for (Tuple tuple : page.getTuples()){
+					if (tuple.satisfySQLConditions(arrSQLTerms, strarrOperators)){
+						result.add(tuple);
+					}
+				}
+			}
+			return result.iterator();
+		} catch (DBAppException e){
+			System.out.println(e.getMessage());
+		}
 		return null;
 	}
 
 
-	public static void main( String[] args )  {
+	public static void main( String[] args )  throws DBAppException{
 
 //	try{
 //			String strTableName = "Student";
@@ -203,49 +223,9 @@ public class DBApp {
 
 		DBApp myDB = new DBApp();
 		myDB.init();
-//		BPlusTree<Long, String> tree =
-//				BPlusTree
-//						.file()
-//						.directory("./DB/")
-//						.maxLeafKeys(32)
-//						.maxNonLeafKeys(8)
-//						.segmentSizeMB(1)
-//						.keySerializer(Serializer.LONG)
-//						.valueSerializer(Serializer.utf8())
-//						.naturalOrder();
-//
-//// insert some values
-//		tree.insert(1000L, "hello");
-//		tree.insert(2000L, "there");
-//
-//// search the tree for values with keys between 0 and 3000
-//// and print out key value pairs
-//		tree.findEntries(0L, 3000L).forEach(entry -> System.out.println(entry));
-//		bplustree bp=new bplustree(3);
-//		HashSet<String> hashSet=new HashSet<String>();
-//		hashSet.add("page1");
-//		bp.insert(3,hashSet);
-////		Serializer.serialize(bp,"trial");
-		bplustree bp= (bplustree) Serializer.deserialize("trial");
-//		HashSet<String> hashSet=new HashSet<String>();
-//		hashSet.add("page3");
-		if(bp.search(3)!=null){
-			HashSet<String> hashSet1=bp.search(3);
-			hashSet1.add("page5");
-//			bp.insert(3,hashSet1);
-		}
-		System.out.println(bp.search(3));
 
 
-// search the tree for values with keys between 0 and 3000
-// and print out values only
-		//tree.find(0L,3000L).forEach(entry -> System.out.println(entry));
-//		Hashtable htblColNameType = new Hashtable( );
-//		htblColNameType.put("id", "java.lang.Integer");
-//		htblColNameType.put("name", "java.lang.String");
-//		htblColNameType.put("gpa", "java.lang.Double");
-//		myDB.createTable( "First_Test", "id", htblColNameType );
-//
+
 //		Hashtable htblColNameValue = new Hashtable( );
 //		htblColNameValue.put("id", 2343432 );
 //		htblColNameValue.put("name", "Abd el satar");
@@ -278,6 +258,38 @@ public class DBApp {
 //
 //		Table first_test = (Table) deserialize("First_Test");
 //		System.out.println(first_test);
+
+		SQLTerm[] arrSQLTerms;
+		arrSQLTerms = new SQLTerm[3];
+
+		arrSQLTerms[0] = new SQLTerm();
+		arrSQLTerms[1] = new SQLTerm();
+		arrSQLTerms[2] = new SQLTerm();
+
+		arrSQLTerms[0]._strTableName = "First_Test";
+		arrSQLTerms[0]._strColumnName= "gpa";
+		arrSQLTerms[0]._strOperator = "<";
+		arrSQLTerms[0]._objValue = new Double(1.0);
+		arrSQLTerms[1]._strTableName = "First_Test";
+		arrSQLTerms[1]._strColumnName= "gpa";
+		arrSQLTerms[1]._strOperator = ">";
+		arrSQLTerms[1]._objValue = new Double(0.9);
+		arrSQLTerms[2]._strTableName = "First_Test";
+		arrSQLTerms[2]._strColumnName= "name";
+		arrSQLTerms[2]._strOperator = "=";
+		arrSQLTerms[2]._objValue = "Zaky Noor";
+		String[] strarrOperators = new String[2];
+		strarrOperators[0] = "AND";
+		strarrOperators[1] = "OR";
+
+
+//		 Should Output 3 Records , Two with GPA 0.95 and One with GPA 0.88
+		Iterator resultSet = myDB.selectFromTable(arrSQLTerms , strarrOperators);
+		while (resultSet.hasNext()){
+			System.out.print("Record Found: ");
+			System.out.print(resultSet.next());
+		}
+
 
 	}
 

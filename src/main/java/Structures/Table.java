@@ -30,16 +30,13 @@ public class Table implements Serializable {
         if (! this.isValid(htblColNameValue)){
             return;
         }
-        HashMap<String,Object> values = new HashMap<String,Object>(htblColNameValue);
-        Tuple tuple = new Tuple(values);
+        Tuple tuple = new Tuple(htblColNameValue);
         Hashtable<String, String> tablenames=extractTblCols(this.tableName);
         Hashtable<String,String> indexedCols=wasIndexMade(this.tableName);
         boolean flag=false;
         if(indexedCols != null){
             flag=true;
-
         }
-
         if (pageNames.isEmpty()){
             Page page = new Page();
             page.addTuple(tuple);
@@ -130,7 +127,9 @@ public class Table implements Serializable {
     }
 
 
-    public void deleteTuple(Hashtable<String, Object> htblColNameValue) {
 
+    public Vector<String> getPageNames() {
+        return pageNames;
     }
+
 }

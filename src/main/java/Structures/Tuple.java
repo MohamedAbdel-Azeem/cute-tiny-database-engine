@@ -1,14 +1,15 @@
 package Structures;
 
+import DBMain.DBAppException;
 import DBMain.SQLTerm;
 
 import java.io.Serializable;
-import java.util.HashMap;
+import java.util.*;
 
 public class Tuple implements Serializable {
-    private HashMap<String,Object> values;
+    private Hashtable<String,Object> values;
 
-    public Tuple(HashMap<String,Object> values){
+    public Tuple(Hashtable<String,Object> values){
         this.values = values;
     }
     public Object getValue(String columnName) {
@@ -31,6 +32,91 @@ public class Tuple implements Serializable {
         }
     }
 
+//    public boolean satisfySQLConditions(SQLTerm[] sqlTerms, String[] starrOperations) throws DBAppException {
+//        if (starrOperations.length + 1 != sqlTerms.length) {
+//            throw new DBAppException("Invalid SQL Operation");
+//        }
+//
+//        boolean overallResult = true;
+//
+//        // Evaluate AND first
+//        for (int i = 0; i < starrOperations.length; i++) {
+//            if (starrOperations[i].equalsIgnoreCase("AND")) {
+//                boolean leftOperand = this.satisfySQLTerm(sqlTerms[i]._strColumnName, sqlTerms[i]._strOperator, sqlTerms[i]._objValue);
+//                boolean rightOperand = this.satisfySQLTerm(sqlTerms[i + 1]._strColumnName, sqlTerms[i + 1]._strOperator, sqlTerms[i + 1]._objValue);
+//                overallResult = overallResult && (leftOperand && rightOperand);
+//            }
+//        }
+//
+//        // Evaluate OR next
+//        for (int i = 0; i < starrOperations.length; i++) {
+//            if (starrOperations[i].equalsIgnoreCase("OR")) {
+//                boolean leftOperand = this.satisfySQLTerm(sqlTerms[i]._strColumnName, sqlTerms[i]._strOperator, sqlTerms[i]._objValue);
+//                boolean rightOperand = this.satisfySQLTerm(sqlTerms[i + 1]._strColumnName, sqlTerms[i + 1]._strOperator, sqlTerms[i + 1]._objValue);
+//                overallResult = overallResult && (leftOperand || rightOperand);
+//            }
+//        }
+//
+//        // Evaluate XOR last
+//        for (int i = 0; i < starrOperations.length; i++) {
+//            if (starrOperations[i].equalsIgnoreCase("XOR")) {
+//                boolean leftOperand = this.satisfySQLTerm(sqlTerms[i]._strColumnName, sqlTerms[i]._strOperator, sqlTerms[i]._objValue);
+//                boolean rightOperand = this.satisfySQLTerm(sqlTerms[i + 1]._strColumnName, sqlTerms[i + 1]._strOperator, sqlTerms[i + 1]._objValue);
+//                overallResult = overallResult && (leftOperand ^ rightOperand);
+//            }
+//        }
+//
+//        return overallResult;
+//    }
+
+    public boolean satisfySQLConditions(SQLTerm[] sqlTerms, String[] starrOperations) throws DBAppException {
+        if (starrOperations.length + 1 != sqlTerms.length) {
+            throw new DBAppException("Invalid SQL Operation");
+        }
+
+        // Compare the Tuple with all the Conditions
+        LinkedList<Boolean> literals = new LinkedList<>();
+        for (SQLTerm sqlTerm : sqlTerms) {
+            literals.addLast(this.satisfySQLTerm(sqlTerm._strColumnName, sqlTerm._strOperator, sqlTerm._objValue));
+        }
+
+        LinkedList<String> starrOperandsList = new LinkedList<>(Arrays.asList(starrOperations));
+
+        // Remove And first
+        for (int i = 0; i < starrOperandsList.size() ; i++){
+            if (starrOperandsList.get(i).equalsIgnoreCase("AND")){
+                boolean leftOperand = literals.remove(i);
+                boolean rightOperand = literals.remove(i);
+                literals.add(i, leftOperand && rightOperand);
+                starrOperandsList.remove(i);
+            }
+        }
+
+        // Remove OR next
+        for (int i = 0; i < starrOperandsList.size() ; i++){
+            if (starrOperandsList.get(i).equalsIgnoreCase("OR")){
+                boolean leftOperand = literals.remove(i);
+                //System.out.println(literals+" "+leftOperand);
+                boolean rightOperand = literals.remove(i);
+                literals.add(i, leftOperand || rightOperand);
+                starrOperandsList.remove(i);
+            }
+        }
+
+        // Remove XOR last
+        for (int i = 0; i < starrOperandsList.size() ; i++){
+            if (starrOperandsList.get(i).equalsIgnoreCase("XOR")){
+                boolean leftOperand = literals.remove(i);
+                boolean rightOperand = literals.remove(i);
+                literals.add(i, leftOperand ^ rightOperand);
+                starrOperandsList.remove(i);
+            }
+        }
+
+        return literals.get(0);
+
+    }
+
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
@@ -44,4 +130,14 @@ public class Tuple implements Serializable {
         return sb.toString() + "\n";
     }
 
+
+    public static void main(String[] args) {
+        Hashtable<String, Object> htblColNameValue = new Hashtable<>();
+        htblColNameValue.put("id", 1);
+        htblColNameValue.put("name", "Ahmed");
+
+        Tuple t = new Tuple(htblColNameValue);
+
+        htblColNameValue.clear();
+    }
 }
