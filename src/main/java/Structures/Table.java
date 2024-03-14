@@ -1,5 +1,6 @@
 package Structures;
 
+import DBMain.DBAppException;
 import Utils.Serializer;
 import Utils.bplustree;
 import Utils.metaFile;
@@ -15,59 +16,64 @@ public class Table implements Serializable {
     private String tableName;
     private String ClusteringKeyColumn;
     private Vector<String> pageNames;
-    private HashSet<Object> PKeys;
 
 
     public Table(String tableName, String clusteringKeyColumn) {
         this.tableName = tableName;
         this.ClusteringKeyColumn = clusteringKeyColumn;
         this.pageNames = new Vector<String>();
-        this.PKeys=new HashSet<Object>();
     }
 
-    public void insertTuple(Hashtable<String,Object> htblColNameValue)  {
-       System.out.println(this.PKeys);
+//    public void insertTuple(Hashtable<String,Object> htblColNameValue)  {
+//        if (! this.isValid(htblColNameValue)){
+//            return;
+//        }
+//        Tuple tuple = new Tuple(htblColNameValue);
+//        Hashtable<String, String> tablenames=extractTblCols(this.tableName);
+//        Hashtable<String,String> indexedCols=wasIndexMade(this.tableName);
+//        boolean flag=false;
+//        if(indexedCols != null){
+//            flag=true;
+//        }
+//        if (pageNames.isEmpty()){
+//            Page page = new Page();
+//            page.addTuple(tuple);
+//            this.PKeys.add(htblColNameValue.get(this.ClusteringKeyColumn));
+//            String pageName = tableName+pageNames.size();
+//            Serializer.serialize(page,pageName);
+//            pageNames.add(pageName);
+//            return;
+//        } else {
+//            for (int i = 0; i < pageNames.size(); i++){ // Handles the 2 Cases of the Page being Not Full and a Page being full not until last pag
+//                Page currPage = (Page) deserialize(pageNames.get(i));
+//                if (! currPage.isFull()){
+//                    this.PKeys.add(htblColNameValue.get(this.ClusteringKeyColumn));
+//                    currPage.addTuple(tuple);
+//                    Serializer.serialize(currPage,pageNames.get(i));
+//                    return;
+//                } else {
+//                    Tuple newTuple = currPage.getTuples().removeLast();
+//                    currPage.addTuple(tuple);
+//                    Serializer.serialize(currPage,pageNames.get(i));
+//                    tuple = newTuple;
+//                }
+//            }
+//            Page newPage = new Page(); // in Case all the Pages were full till the last page create a new page
+//            newPage.addTuple(tuple);
+//            String pageName = tableName+pageNames.size();
+//            pageNames.add(pageName);
+//            Serializer.serialize(newPage,pageName);
+//            this.PKeys.add(htblColNameValue.get(this.ClusteringKeyColumn));
+//            return;
+//        }
+//    }
+
+    public void insertTuple(Hashtable<String,Object> htblColNameValue) throws DBAppException {
         if (! this.isValid(htblColNameValue)){
-            return;
+            throw new DBAppException("Invalid Tuple");
         }
         Tuple tuple = new Tuple(htblColNameValue);
-        Hashtable<String, String> tablenames=extractTblCols(this.tableName);
-        Hashtable<String,String> indexedCols=wasIndexMade(this.tableName);
-        boolean flag=false;
-        if(indexedCols != null){
-            flag=true;
-        }
-        if (pageNames.isEmpty()){
-            Page page = new Page();
-            page.addTuple(tuple);
-            this.PKeys.add(htblColNameValue.get(this.ClusteringKeyColumn));
-            String pageName = tableName+pageNames.size();
-            Serializer.serialize(page,pageName);
-            pageNames.add(pageName);
-            return;
-        } else {
-            for (int i = 0; i < pageNames.size(); i++){ // Handles the 2 Cases of the Page being Not Full and a Page being full not until last pag
-                Page currPage = (Page) deserialize(pageNames.get(i));
-                if (! currPage.isFull()){
-                    this.PKeys.add(htblColNameValue.get(this.ClusteringKeyColumn));
-                    currPage.addTuple(tuple);
-                    Serializer.serialize(currPage,pageNames.get(i));
-                    return;
-                } else {
-                    Tuple newTuple = currPage.getTuples().removeLast();
-                    currPage.addTuple(tuple);
-                    Serializer.serialize(currPage,pageNames.get(i));
-                    tuple = newTuple;
-                }
-            }
-            Page newPage = new Page(); // in Case all the Pages were full till the last page create a new page
-            newPage.addTuple(tuple);
-            String pageName = tableName+pageNames.size();
-            pageNames.add(pageName);
-            Serializer.serialize(newPage,pageName);
-            this.PKeys.add(htblColNameValue.get(this.ClusteringKeyColumn));
-            return;
-        }
+
     }
 
     // Check Column Types
@@ -93,11 +99,6 @@ public class Table implements Serializable {
                     return flag;
                    }
             }
-            Object PK=htblColNameValue.get(this.ClusteringKeyColumn);
-            //System.out.println(this.PKeys);
-            if(this.PKeys.size()!=0&&this.PKeys.contains(PK))
-            {System.out.println("Tuple is already inserted");
-                return  false;}
             return  true;
     }
 

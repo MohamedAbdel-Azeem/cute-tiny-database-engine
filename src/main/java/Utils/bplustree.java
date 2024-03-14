@@ -6,7 +6,7 @@ import java.io.*;
 
 public class bplustree implements Serializable{
 	int m;
-	 InternalNode root;
+	InternalNode root;
 	LeafNode firstLeaf;
 
 	/*~~~~~~~~~~~~~~~~ HELPER FUNCTIONS ~~~~~~~~~~~~~~~~*/
@@ -28,8 +28,8 @@ public class bplustree implements Serializable{
 				return o1.key.compareTo(o2.key);
 			}
 		};
-		HashSet<String> hashset=new HashSet<String>();
-		return Arrays.binarySearch(dps, 0, numPairs, new DictionaryPair(t, hashset), c);
+		Vector<String> Vector=new Vector<>();
+		return Arrays.binarySearch(dps, 0, numPairs, new DictionaryPair(t, Vector), c);
 	}
 
 	/**
@@ -435,8 +435,8 @@ public class bplustree implements Serializable{
 
 					// Borrow: First, check the left sibling, then the right sibling
 					if (ln.leftSibling != null &&
-						ln.leftSibling.parent == ln.parent &&
-						ln.leftSibling.isLendable()) {
+							ln.leftSibling.parent == ln.parent &&
+							ln.leftSibling.isLendable()) {
 
 						sibling = ln.leftSibling;
 						DictionaryPair borrowedDP = sibling.dictionary[sibling.numPairs - 1];
@@ -454,8 +454,8 @@ public class bplustree implements Serializable{
 						}
 
 					} else if (ln.rightSibling != null &&
-							   ln.rightSibling.parent == ln.parent &&
-							   ln.rightSibling.isLendable()) {
+							ln.rightSibling.parent == ln.parent &&
+							ln.rightSibling.isLendable()) {
 
 						sibling = ln.rightSibling;
 						DictionaryPair borrowedDP = sibling.dictionary[0];
@@ -476,8 +476,8 @@ public class bplustree implements Serializable{
 
 					// Merge: First, check the left sibling, then the right sibling
 					else if (ln.leftSibling != null &&
-							 ln.leftSibling.parent == ln.parent &&
-							 ln.leftSibling.isMergeable()) {
+							ln.leftSibling.parent == ln.parent &&
+							ln.leftSibling.isMergeable()) {
 
 						sibling = ln.leftSibling;
 						int pointerIndex = findIndexOfPointer(parent.childPointers, ln);
@@ -495,8 +495,8 @@ public class bplustree implements Serializable{
 						}
 
 					} else if (ln.rightSibling != null &&
-							   ln.rightSibling.parent == ln.parent &&
-							   ln.rightSibling.isMergeable()) {
+							ln.rightSibling.parent == ln.parent &&
+							ln.rightSibling.isMergeable()) {
 
 						sibling = ln.rightSibling;
 						int pointerIndex = findIndexOfPointer(parent.childPointers, ln);
@@ -541,7 +541,7 @@ public class bplustree implements Serializable{
 	 * @param key: an integer key to be used in the dictionary pair
 	 * @param value: a floating point number to be used in the dictionary pair
 	 */
-	public void insert(Comparable key, HashSet<String> value){
+	public void insert(Comparable key, Vector<String> value){
 		if (isEmpty()) {
 
 			/* Flow of execution goes here only when first insert takes place */
@@ -556,7 +556,7 @@ public class bplustree implements Serializable{
 
 			// Find leaf node to insert into
 			LeafNode ln = (this.root == null) ? this.firstLeaf :
-												findLeafNode(key);
+					findLeafNode(key);
 
 			// Insert into leaf node fails if node becomes overfull
 			if (!ln.insert(new DictionaryPair(key, value))) {
@@ -635,7 +635,7 @@ public class bplustree implements Serializable{
 	 * @param key: the key to be searched within the B+ tree
 	 * @return the floating point value associated with the key within the B+ tree
 	 */
-	public HashSet<String> search(Comparable key) {
+	public Vector<String> search(Comparable key) {
 
 		// If B+ tree is completely empty, simply return null
 		if (isEmpty()) { return null; }
@@ -664,10 +664,10 @@ public class bplustree implements Serializable{
 	 * @return an Vector<Double> that holds all values of dictionary pairs
 	 * whose keys are within the specified range
 	 */
-	public Vector<HashSet<String>> search(Comparable lowerBound, Comparable upperBound) {
+	public Vector<Vector<String>> search(Comparable lowerBound, Comparable upperBound) {
 
 		// Instantiate Double array to hold values
-		Vector<HashSet<String>> values = new Vector<HashSet<String>>();
+		Vector<Vector<String>> values = new Vector<Vector<String>>();
 
 		// Iterate through the doubly linked list of leaves
 		LeafNode currNode = this.firstLeaf;
@@ -683,7 +683,7 @@ public class bplustree implements Serializable{
 
 				// Include value if its key fits within the provided range
 				if (lowerBound.compareTo(dp.key)<=0 && dp.key.compareTo(upperBound)<=0) {
-					values.add((HashSet<String>) dp.value);
+					values.add((Vector<String>) dp.value);
 				}
 			}
 
@@ -1009,14 +1009,14 @@ public class bplustree implements Serializable{
 	 */
 	public class DictionaryPair implements Comparable<DictionaryPair>,Serializable {
 		Comparable key;
-		HashSet<String> value;
+		Vector<String> value;
 
 		/**
 		 * Constructor
 		 * @param key: the key of the key-value pair
 		 * @param value: the value of the key-value pair
 		 */
-		public DictionaryPair(Comparable key, HashSet<String> value) {
+		public DictionaryPair(Comparable key, Vector<String> value) {
 			this.key = key;
 			this.value = value;
 		}
