@@ -51,6 +51,11 @@ public class DBApp {
 			if (file.exists()){
 				throw new DBAppException("Table already exists");
 			}
+			for (String dataType : htblColNameType.values()){
+				if (!dataType.equals("java.lang.Integer") && !dataType.equals("java.lang.String") && !dataType.equals("java.lang.Double")){
+					throw new DBAppException("Invalid Data Type");
+				}
+			}
 			Table newTable = new Table(strTableName, strClusteringKeyColumn);
 			appendOnMetaDataFile(strTableName,strClusteringKeyColumn,htblColNameType);
 			serialize(newTable,strTableName);
@@ -91,7 +96,7 @@ public class DBApp {
 			serialize(myTable,strTableName);
 			return;
 		} catch (Exception e){
-			System.out.println("Table doesn't exist");
+			System.out.println(e.getMessage());
 		}
 	}
 
