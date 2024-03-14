@@ -102,18 +102,18 @@ public class Table implements Serializable {
     }
 
   private void insertIntoTree(Comparable key,String indexId,String pageName){
-//
-//        bplustree bp= (bplustree) Serializer.deserialize(indexId);
-//      if(bp.search(key)!=null){
-//          HashSet<Tuple> hashSet1=bp.search(key);
-//          hashSet1.add(pageName);
-//      }
-//      else{
-//          HashSet<String> hashSet=new HashSet<String>();
-//          hashSet.add(pageName);
-//          bp.insert(key,hashSet);
-//      }
-//      Serializer.serialize(bp,indexId);
+
+        bplustree bp= (bplustree) Serializer.deserialize(indexId);
+      if(bp.search(key)!=null){
+          HashSet<String> hashSet1=bp.search(key);
+          hashSet1.add(pageName);
+      }
+      else{
+          HashSet<String> hashSet=new HashSet<String>();
+          hashSet.add(pageName);
+          bp.insert(key,hashSet);
+      }
+      Serializer.serialize(bp,indexId);
 
   }
     public String toString(){
