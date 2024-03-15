@@ -152,15 +152,214 @@ public class Table implements Serializable {
 //
 //    }
 
-    public void insertTuple(Hashtable<String,Object> htblColNameValue) throws DBAppException {
+//    public void insertTuple(Hashtable<String,Object> htblColNameValue) throws DBAppException {
+//        if (! this.isValid(htblColNameValue)){
+//            throw new DBAppException("Invalid Tuple Data Types");
+//        }
+//        Tuple newTuple = new Tuple(htblColNameValue);
+//        Hashtable<String,String> indexedCols=wasIndexMade(this.tableName);
+//        if (pageNames.isEmpty()){ // First Tuple to get Inserted
+//            Page newPage = new Page();
+//            newPage.addTuple(0,newTuple);
+//            String pageName = tableName+pageNames.size();
+//            pageNames.add(pageName);
+//            Serializer.serialize(newPage,pageName);
+//            return;
+//        }
+//        int HighPageIndex = pageNames.size()-1;
+//        int LowPageIndex = 0;
+//        int MidPageIndex = (HighPageIndex+LowPageIndex)/2;
+//        // Check if the Tuple is having the Min Clustering Key Value
+//        Page firstPage = (Page) deserialize(pageNames.getFirst());
+//        if (((Comparable) firstPage.getTuples().getFirst().getValue(this.ClusteringKeyColumn)).compareTo((Comparable) newTuple.getValue(this.ClusteringKeyColumn)) >= 0){
+//            if (firstPage.getTuples().getFirst().getValue(this.ClusteringKeyColumn).equals(newTuple.getValue(this.ClusteringKeyColumn))){
+//                throw new DBAppException("Primary Key Violation");
+//            }
+//            if (firstPage.isFull()){
+//                Tuple lastTuple = firstPage.getTuples().removeLast();
+//                firstPage.addTuple(0,newTuple);
+//                Serializer.serialize(firstPage,pageNames.getFirst());
+//                for (int i = 1 ; i < pageNames.size(); i++){
+//                    Page nextPage = (Page) deserialize(pageNames.get(i));
+//                    if (! nextPage.isFull()){
+//                        nextPage.getTuples().addFirst(lastTuple);
+//                        Serializer.serialize(nextPage,pageNames.get(i));
+//                        return;
+//                    } else {
+//                        nextPage.getTuples().addFirst(lastTuple);
+//                        lastTuple = nextPage.getTuples().removeLast();
+//                        Serializer.serialize(nextPage,pageNames.get(i));
+//                    }
+//                }
+//                Page newPage = new Page();
+//                newPage.addTuple(0,lastTuple);
+//                String newPageName = tableName+pageNames.size();
+//                pageNames.add(newPageName);
+//                Serializer.serialize(newPage,newPageName);
+//                return;
+//            }
+//            // first page not full
+//            firstPage.addTuple(0,newTuple);
+//            Serializer.serialize(firstPage,pageNames.getFirst());
+//            return;
+//        }
+//        // Check if the Tuple is having the Max Clustering Key Value
+//        Page lastPage = (Page) deserialize(pageNames.get(pageNames.size()-1));
+//        if (((Comparable) lastPage.getTuples().getLast().getValue(this.ClusteringKeyColumn)).compareTo((Comparable) newTuple.getValue(this.ClusteringKeyColumn)) <= 0){
+//            if (lastPage.getTuples().getLast().getValue(this.ClusteringKeyColumn).equals(newTuple.getValue(this.ClusteringKeyColumn))){
+//                throw new DBAppException("Primary Key Violation");
+//            }
+//            if (lastPage.isFull()){
+//                Page newPage = new Page();
+//                newPage.addTuple(0,newTuple);
+//                String newPageName = tableName+pageNames.size();
+//                pageNames.add(newPageName);
+//                Serializer.serialize(newPage,newPageName);
+//                return;
+//            }
+//            lastPage.addTuple(lastPage.getTuples().size(),newTuple);
+//            Serializer.serialize(lastPage,pageNames.getLast());
+//            return;
+//        }
+//        // Performing Binary Search to get the Correct Page to Insert the Tuple
+//        while (LowPageIndex <= HighPageIndex){
+//            Page MidPage = (Page) deserialize(pageNames.get(MidPageIndex));
+//            if (helper_TupleInRangePage(MidPage,(Comparable) newTuple.getValue(ClusteringKeyColumn))){ // Ideal Case Where Tuple is Within Range of the Mid Page
+//                if (MidPage.isFull()){
+//                    Tuple lastTuple = MidPage.getTuples().removeLast();
+//                    int InsertIndex = helperSearchInsert(MidPage.getTuples(), (Comparable) htblColNameValue.get(this.ClusteringKeyColumn));
+//                    if (InsertIndex == -1 || lastTuple.getValue(this.ClusteringKeyColumn).equals(newTuple.getValue(this.ClusteringKeyColumn))) {
+//                        MidPage.getTuples().addLast(lastTuple);
+//                        throw new DBAppException("Primary Key Violation");
+//                    }
+//                    MidPage.getTuples().insertElementAt(newTuple, InsertIndex);
+//                    Serializer.serialize(MidPage,pageNames.get(MidPageIndex));
+//                    for (int j = MidPageIndex+1 ; j < pageNames.size(); j++){
+//                        Page nextPage = (Page) deserialize(pageNames.get(j));
+//                        if (! nextPage.isFull()){
+//                            nextPage.getTuples().addFirst(lastTuple);
+//                            Serializer.serialize(nextPage,pageNames.get(j));
+//                            return;
+//                        } else {
+//                            nextPage.getTuples().addFirst(lastTuple);
+//                            lastTuple = nextPage.getTuples().removeLast();
+//                            Serializer.serialize(nextPage,pageNames.get(j));
+//                        }
+//                    }
+//                    Page newPage = new Page();
+//                    newPage.addTuple(0,lastTuple);
+//                    String newPageName = tableName+pageNames.size();
+//                    pageNames.add(newPageName);
+//                    Serializer.serialize(newPage,newPageName);
+//                } else {
+//                    int InsertIndex = helperSearchInsert(MidPage.getTuples(), (Comparable) htblColNameValue.get(this.ClusteringKeyColumn));
+//                    if (InsertIndex == -1) {
+//                        throw new DBAppException("Primary Key Violation");
+//                    }
+//                    MidPage.getTuples().insertElementAt(newTuple, InsertIndex);
+//                    Serializer.serialize(MidPage,pageNames.get(MidPageIndex));
+//                }
+//                return;
+//            }
+//            if (((Comparable) MidPage.getTuples().getLast().getValue(this.ClusteringKeyColumn)).compareTo((Comparable) newTuple.getValue(this.ClusteringKeyColumn)) < 0){ // Bigger than Mid Page Greater Index -> 2 Cases will Result!
+//                // Case 2 & 3 Where a Next Page Exists , Case 1 where inserting Max Clustering Key is Handled before loop
+//                    Page nextPage = (Page) deserialize(pageNames.get(MidPageIndex+1));
+//                    if (((Comparable) nextPage.getTuples().getFirst().getValue(this.ClusteringKeyColumn)).compareTo((Comparable) newTuple.getValue(this.ClusteringKeyColumn)) == 0){
+//                        throw new DBAppException("Primary Key Violation");
+//                    }
+//                    if (((Comparable) nextPage.getTuples().getFirst().getValue(this.ClusteringKeyColumn)).compareTo((Comparable) newTuple.getValue(this.ClusteringKeyColumn)) > 0){ // Case 2 -> my Key is Smaller than the min of the Next Page , we Insert in Mid Page
+//                        int insertIndex = helperSearchInsert(MidPage.getTuples(), (Comparable) htblColNameValue.get(this.ClusteringKeyColumn));
+//                        if (insertIndex == -1) {
+//                            throw new DBAppException("Primary Key Violation");
+//                        }
+//                        if (! MidPage.isFull()){
+//                            MidPage.getTuples().insertElementAt(newTuple, insertIndex);
+//                            Serializer.serialize(MidPage,pageNames.get(MidPageIndex));
+//                            return;
+//                        } else {
+//                            if (!nextPage.isFull()){
+//                                nextPage.getTuples().addFirst(newTuple);
+//                                Serializer.serialize(nextPage,pageNames.get(MidPageIndex+1));
+//                            } else {
+//                                Tuple lastTuple = nextPage.getTuples().removeLast();
+//                                nextPage.getTuples().insertElementAt(newTuple, 0);
+//                                Serializer.serialize(nextPage,pageNames.get(MidPageIndex));
+//                                for (int j = MidPageIndex+2 ; j < pageNames.size(); j++){
+//                                    Page nextNextPage = (Page) deserialize(pageNames.get(j));
+//                                    if (! nextNextPage.isFull()){
+//                                        nextNextPage.getTuples().addFirst(lastTuple);
+//                                        Serializer.serialize(nextNextPage,pageNames.get(j));
+//                                        return;
+//                                    } else {
+//                                        nextNextPage.getTuples().addFirst(lastTuple);
+//                                        lastTuple = nextNextPage.getTuples().removeLast();
+//                                        Serializer.serialize(nextNextPage,pageNames.get(j));
+//                                    }
+//                                }
+//                                Page newPage = new Page();
+//                                newPage.addTuple(0,lastTuple);
+//                                String newPageName = tableName+pageNames.size();
+//                                pageNames.add(newPageName);
+//                                Serializer.serialize(newPage,newPageName);
+//                            }
+//                            return;
+//                        }
+//                    } else{ // Case 3 -> my Key is Bigger than the min of the Next Page , we re-calculate the Mid Page Index
+//                        LowPageIndex = MidPageIndex+1;
+//                        MidPageIndex = (HighPageIndex+LowPageIndex)/2;
+//                    }
+//            }
+//            if (((Comparable) MidPage.getTuples().getFirst().getValue(this.ClusteringKeyColumn)).compareTo((Comparable) newTuple.getValue(this.ClusteringKeyColumn)) > 0){ // Smaller than Mid Page Smaller Index -> 3 Cases will Result!
+//                // Case 2 & 3 Where a Previous Page Exists , Case 1 where inserting Min Clustering Key is handled before loop
+//                Page prevPage = (Page) deserialize(pageNames.get(MidPageIndex-1));
+//                if (((Comparable) prevPage.getTuples().getLast().getValue(this.ClusteringKeyColumn)).compareTo((Comparable) newTuple.getValue(this.ClusteringKeyColumn)) < 0){ // Case 2 -> my Key is Greater than the max of the prev Page , we Insert in Mid Page
+//                    int insertIndex = helperSearchInsert(MidPage.getTuples(), (Comparable) htblColNameValue.get(this.ClusteringKeyColumn));
+//                    if (insertIndex == -1) {
+//                        throw new DBAppException("Primary Key Violation");
+//                    }
+//                    if (! MidPage.isFull()){ // Will Shift
+//                        MidPage.getTuples().insertElementAt(newTuple, insertIndex);
+//                        Serializer.serialize(MidPage,pageNames.get(MidPageIndex));
+//                    } else {
+//                        Tuple lastTuple = MidPage.getTuples().removeLast();
+//                        MidPage.getTuples().insertElementAt(newTuple, insertIndex);
+//                        Serializer.serialize(MidPage,pageNames.get(MidPageIndex));
+//                        for (int j = MidPageIndex+1 ; j < pageNames.size(); j++){
+//                            Page nextPage = (Page) deserialize(pageNames.get(j));
+//                            if (! nextPage.isFull()){
+//                                nextPage.getTuples().addFirst(lastTuple);
+//                                Serializer.serialize(nextPage,pageNames.get(j));
+//                                return;
+//                            } else {
+//                                nextPage.getTuples().addFirst(lastTuple);
+//                                lastTuple = nextPage.getTuples().removeLast();
+//                                Serializer.serialize(nextPage,pageNames.get(j));
+//                            }
+//                        }
+//                        Page newPage = new Page();
+//                        newPage.addTuple(0,lastTuple);
+//                        String newPageName = tableName+pageNames.size();
+//                        pageNames.add(newPageName);
+//                        Serializer.serialize(newPage,newPageName);
+//                    }
+//                    return;
+//                } else{ // Case 3 -> my Key is Bigger than the min of the Next Page , we re-calculate the Mid Page Index
+//                    HighPageIndex = MidPageIndex-1;
+//                    MidPageIndex = (HighPageIndex+LowPageIndex)/2;
+//                }
+//            }
+//        }
+//    }
+
+    public void insertTuple(Hashtable<String, Object> htblColNameValue) throws DBAppException{
         if (! this.isValid(htblColNameValue)){
             throw new DBAppException("Invalid Tuple Data Types");
         }
-
         Tuple newTuple = new Tuple(htblColNameValue);
         Hashtable<String,String> indexedCols=wasIndexMade(this.tableName);
 
-        if (pageNames.isEmpty()){ // First Tuple to get Inserted
+        // Handle first Insert in the Table
+        if (pageNames.isEmpty()){
             Page newPage = new Page();
             newPage.addTuple(0,newTuple);
             String pageName = tableName+pageNames.size();
@@ -169,197 +368,87 @@ public class Table implements Serializable {
             return;
         }
 
-        int HighPageIndex = pageNames.size()-1;
-        int LowPageIndex = 0;
-        int MidPageIndex = (HighPageIndex+LowPageIndex)/2;
+        int PageIndex = helper_getPageIndex(newTuple);
+        Page page = (Page) deserialize(pageNames.get(PageIndex));
+        int insertIndex = helperSearchInsert(page.getTuples(), (Comparable) htblColNameValue.get(this.ClusteringKeyColumn));
+        if (insertIndex == -1) {
+            throw new DBAppException("Primary Key Violation");
+        }
+        if (page.isFull()){
+            Tuple lastTuple = page.getTuples().removeLast();
+            page.getTuples().insertElementAt(newTuple, insertIndex);
+            Serializer.serialize(page,pageNames.get(PageIndex));
+            for (int j = PageIndex+1 ; j < pageNames.size(); j++){
+                Page nextPage = (Page) deserialize(pageNames.get(j));
+                if (! nextPage.isFull()){
+                    nextPage.getTuples().addFirst(lastTuple);
+                    Serializer.serialize(nextPage,pageNames.get(j));
+                    return;
+                } else {
+                    nextPage.getTuples().addFirst(lastTuple);
+                    lastTuple = nextPage.getTuples().removeLast();
+                    Serializer.serialize(nextPage,pageNames.get(j));
+                }
+            }
+            Page newPage = new Page();
+            newPage.addTuple(0,lastTuple);
+            String newPageName = tableName+pageNames.size();
+            pageNames.add(newPageName);
+            Serializer.serialize(newPage,newPageName);
+            return;
+        } else {
+            page.getTuples().insertElementAt(newTuple, insertIndex);
+            Serializer.serialize(page,pageNames.get(PageIndex));
+            return;
+        }
+    }
 
+    public int helper_getPageIndex(Tuple newTuple){
         // Check if the Tuple is having the Min Clustering Key Value
         Page firstPage = (Page) deserialize(pageNames.getFirst());
         if (((Comparable) firstPage.getTuples().getFirst().getValue(this.ClusteringKeyColumn)).compareTo((Comparable) newTuple.getValue(this.ClusteringKeyColumn)) >= 0){
-            if (firstPage.getTuples().getFirst().getValue(this.ClusteringKeyColumn).equals(newTuple.getValue(this.ClusteringKeyColumn))){
-                throw new DBAppException("Primary Key Violation");
-            }
-            if (firstPage.isFull()){
-                Tuple lastTuple = firstPage.getTuples().removeLast();
-                firstPage.addTuple(0,newTuple);
-                Serializer.serialize(firstPage,pageNames.getFirst());
-                for (int i = 1 ; i < pageNames.size(); i++){
-                    Page nextPage = (Page) deserialize(pageNames.get(i));
-                    if (! nextPage.isFull()){
-                        nextPage.getTuples().addFirst(lastTuple);
-                        Serializer.serialize(nextPage,pageNames.get(i));
-                        return;
-                    } else {
-                        nextPage.getTuples().addFirst(lastTuple);
-                        lastTuple = nextPage.getTuples().removeLast();
-                        Serializer.serialize(nextPage,pageNames.get(i));
-                    }
-                }
-                Page newPage = new Page();
-                newPage.addTuple(0,lastTuple);
-                String newPageName = tableName+pageNames.size();
-                pageNames.add(newPageName);
-                Serializer.serialize(newPage,newPageName);
-                return;
-            }
-            firstPage.addTuple(0,newTuple);
-            Serializer.serialize(firstPage,pageNames.getFirst());
-            return;
+            return 0;
         }
-
         // Check if the Tuple is having the Max Clustering Key Value
-        Page lastPage = (Page) deserialize(pageNames.get(pageNames.size()-1));
+        Page lastPage = (Page) deserialize(pageNames.getLast());
         if (((Comparable) lastPage.getTuples().getLast().getValue(this.ClusteringKeyColumn)).compareTo((Comparable) newTuple.getValue(this.ClusteringKeyColumn)) <= 0){
-            if (lastPage.getTuples().getLast().getValue(this.ClusteringKeyColumn).equals(newTuple.getValue(this.ClusteringKeyColumn))){
-                throw new DBAppException("Primary Key Violation");
-            }
-            if (lastPage.isFull()){
-                Page newPage = new Page();
-                newPage.addTuple(0,newTuple);
-                String newPageName = tableName+pageNames.size();
-                pageNames.add(newPageName);
-                Serializer.serialize(newPage,newPageName);
-                return;
-            }
-            lastPage.addTuple(lastPage.getTuples().size(),newTuple);
-            Serializer.serialize(lastPage,pageNames.getLast());
-            return;
+            return pageNames.size()-1;
         }
-
-
+        // Performing Binary Search to get the Correct Page to Insert the Tuple
+        int HighPageIndex = pageNames.size()-1;
+        int LowPageIndex = 0;
+        int MidPageIndex = (HighPageIndex+LowPageIndex)/2;
         while (LowPageIndex <= HighPageIndex){
             Page MidPage = (Page) deserialize(pageNames.get(MidPageIndex));
             if (helper_TupleInRangePage(MidPage,(Comparable) newTuple.getValue(ClusteringKeyColumn))){ // Ideal Case Where Tuple is Within Range of the Mid Page
-                if (MidPage.isFull()){
-                    Tuple lastTuple = MidPage.getTuples().removeLast();
-                    int InsertIndex = helperSearchInsert(MidPage.getTuples(), (Comparable) htblColNameValue.get(this.ClusteringKeyColumn));
-                    if (InsertIndex == -1 || lastTuple.getValue(this.ClusteringKeyColumn).equals(newTuple.getValue(this.ClusteringKeyColumn))) {
-                        MidPage.getTuples().addLast(lastTuple);
-                        throw new DBAppException("Primary Key Violation");
-                    }
-                    MidPage.getTuples().insertElementAt(newTuple, InsertIndex);
-                    Serializer.serialize(MidPage,pageNames.get(MidPageIndex));
-                    for (int j = MidPageIndex+1 ; j < pageNames.size(); j++){
-                        Page nextPage = (Page) deserialize(pageNames.get(j));
-                        if (! nextPage.isFull()){
-                            nextPage.getTuples().addFirst(lastTuple);
-                            Serializer.serialize(nextPage,pageNames.get(j));
-                            return;
-                        } else {
-                            nextPage.getTuples().addFirst(lastTuple);
-                            lastTuple = nextPage.getTuples().removeLast();
-                            Serializer.serialize(nextPage,pageNames.get(j));
-                        }
-                    }
-                    Page newPage = new Page();
-                    newPage.addTuple(0,lastTuple);
-                    String newPageName = tableName+pageNames.size();
-                    pageNames.add(newPageName);
-                    Serializer.serialize(newPage,newPageName);
-                } else {
-                    int InsertIndex = helperSearchInsert(MidPage.getTuples(), (Comparable) htblColNameValue.get(this.ClusteringKeyColumn));
-                    if (InsertIndex == -1) {
-                        throw new DBAppException("Primary Key Violation");
-                    }
-                    MidPage.getTuples().insertElementAt(newTuple, InsertIndex);
-                    Serializer.serialize(MidPage,pageNames.get(MidPageIndex));
-                }
-                return;
+                return MidPageIndex;
             }
-            if (((Comparable) MidPage.getTuples().getLast().getValue(this.ClusteringKeyColumn)).compareTo((Comparable) newTuple.getValue(this.ClusteringKeyColumn)) < 0){ // Bigger than Mid Page Greater Index -> 2 Cases will Result!
-                // Case 2 & 3 Where a Next Page Exists , Case 1 where inserting Max Clustering Key is Handled before loop
-                    Page nextPage = (Page) deserialize(pageNames.get(MidPageIndex+1));
-                    if (((Comparable) nextPage.getTuples().getFirst().getValue(this.ClusteringKeyColumn)).compareTo((Comparable) newTuple.getValue(this.ClusteringKeyColumn)) == 0){
-                        throw new DBAppException("Primary Key Violation");
-                    }
-                    if (((Comparable) nextPage.getTuples().getFirst().getValue(this.ClusteringKeyColumn)).compareTo((Comparable) newTuple.getValue(this.ClusteringKeyColumn)) > 0){ // Case 2 -> my Key is Smaller than the min of the Next Page , we Insert in Mid Page
-                        int insertIndex = helperSearchInsert(MidPage.getTuples(), (Comparable) htblColNameValue.get(this.ClusteringKeyColumn));
-                        if (insertIndex == -1) {
-                            throw new DBAppException("Primary Key Violation");
-                        }
-                        if (! MidPage.isFull()){
-                            MidPage.getTuples().insertElementAt(newTuple, insertIndex);
-                            Serializer.serialize(MidPage,pageNames.get(MidPageIndex));
-                            return;
-                        } else {
-                            if (!nextPage.isFull()){
-                                nextPage.getTuples().addFirst(newTuple);
-                                Serializer.serialize(nextPage,pageNames.get(MidPageIndex+1));
-                            } else {
-                                Tuple lastTuple = nextPage.getTuples().removeLast();
-                                nextPage.getTuples().insertElementAt(newTuple, 0);
-                                Serializer.serialize(nextPage,pageNames.get(MidPageIndex));
-                                for (int j = MidPageIndex+2 ; j < pageNames.size(); j++){
-                                    Page nextNextPage = (Page) deserialize(pageNames.get(j));
-                                    if (! nextNextPage.isFull()){
-                                        nextNextPage.getTuples().addFirst(lastTuple);
-                                        Serializer.serialize(nextNextPage,pageNames.get(j));
-                                        return;
-                                    } else {
-                                        nextNextPage.getTuples().addFirst(lastTuple);
-                                        lastTuple = nextNextPage.getTuples().removeLast();
-                                        Serializer.serialize(nextNextPage,pageNames.get(j));
-                                    }
-                                }
-                                Page newPage = new Page();
-                                newPage.addTuple(0,lastTuple);
-                                String newPageName = tableName+pageNames.size();
-                                pageNames.add(newPageName);
-                                Serializer.serialize(newPage,newPageName);
-                            }
-                            return;
-                        }
-                    } else{ // Case 3 -> my Key is Bigger than the min of the Next Page , we re-calculate the Mid Page Index
-                        LowPageIndex = MidPageIndex+1;
-                        MidPageIndex = (HighPageIndex+LowPageIndex)/2;
-                    }
-            }
-            if (((Comparable) MidPage.getTuples().getFirst().getValue(this.ClusteringKeyColumn)).compareTo((Comparable) newTuple.getValue(this.ClusteringKeyColumn)) > 0){ // Smaller than Mid Page Smaller Index -> 3 Cases will Result!
-                // Case 2 & 3 Where a Previous Page Exists , Case 1 where inserting Min Clustering Key is handled before loop
+            // Check if Clustering Key is less than the Min of the Mid Page but greater than the Max of the Previous Page then return the Mid Page Index
+            if (((Comparable) MidPage.getTuples().getFirst().getValue(this.ClusteringKeyColumn)).compareTo((Comparable) newTuple.getValue(this.ClusteringKeyColumn)) > 0){
                 Page prevPage = (Page) deserialize(pageNames.get(MidPageIndex-1));
-                if (((Comparable) prevPage.getTuples().getLast().getValue(this.ClusteringKeyColumn)).compareTo((Comparable) newTuple.getValue(this.ClusteringKeyColumn)) < 0){ // Case 2 -> my Key is Greater than the max of the prev Page , we Insert in Mid Page
-                    int insertIndex = helperSearchInsert(MidPage.getTuples(), (Comparable) htblColNameValue.get(this.ClusteringKeyColumn));
-                    if (insertIndex == -1) {
-                        throw new DBAppException("Primary Key Violation");
-                    }
-                    if (! MidPage.isFull()){ // Will Shift
-                        MidPage.getTuples().insertElementAt(newTuple, insertIndex);
-                        Serializer.serialize(MidPage,pageNames.get(MidPageIndex));
-                    } else {
-                        Tuple lastTuple = MidPage.getTuples().removeLast();
-                        MidPage.getTuples().insertElementAt(newTuple, insertIndex);
-                        Serializer.serialize(MidPage,pageNames.get(MidPageIndex));
-                        for (int j = MidPageIndex+1 ; j < pageNames.size(); j++){
-                            Page nextPage = (Page) deserialize(pageNames.get(j));
-                            if (! nextPage.isFull()){
-                                nextPage.getTuples().addFirst(lastTuple);
-                                Serializer.serialize(nextPage,pageNames.get(j));
-                                return;
-                            } else {
-                                nextPage.getTuples().addFirst(lastTuple);
-                                lastTuple = nextPage.getTuples().removeLast();
-                                Serializer.serialize(nextPage,pageNames.get(j));
-                            }
-                        }
-                        Page newPage = new Page();
-                        newPage.addTuple(0,lastTuple);
-                        String newPageName = tableName+pageNames.size();
-                        pageNames.add(newPageName);
-                        Serializer.serialize(newPage,newPageName);
-                    }
-                    return;
-                } else{ // Case 3 -> my Key is Bigger than the min of the Next Page , we re-calculate the Mid Page Index
-                    HighPageIndex = MidPageIndex-1;
-                    MidPageIndex = (HighPageIndex+LowPageIndex)/2;
+                if (((Comparable) prevPage.getTuples().getLast().getValue(this.ClusteringKeyColumn)).compareTo((Comparable) newTuple.getValue(this.ClusteringKeyColumn)) < 0){
+                    return MidPageIndex;
                 }
-
-
+                HighPageIndex = MidPageIndex-1;
+                MidPageIndex = (HighPageIndex+LowPageIndex)/2;
+                continue;
             }
+            // Check if Clustering Key is greater than the Max of the Mid Page but less than the Min of the Next Page then return the next Page Index
+            if (((Comparable) MidPage.getTuples().getLast().getValue(this.ClusteringKeyColumn)).compareTo((Comparable) newTuple.getValue(this.ClusteringKeyColumn)) < 0){
+                Page nextPage = (Page) deserialize(pageNames.get(MidPageIndex+1));
+                if (((Comparable) nextPage.getTuples().getFirst().getValue(this.ClusteringKeyColumn)).compareTo((Comparable) newTuple.getValue(this.ClusteringKeyColumn)) > 0){
+                    return MidPageIndex+1;
+                }
+                LowPageIndex = MidPageIndex+1;
+                MidPageIndex = (HighPageIndex+LowPageIndex)/2;
+                continue;
+            }
+            LowPageIndex = MidPageIndex-1;
+            MidPageIndex = (HighPageIndex+LowPageIndex)/2;
+            continue;
         }
-
+        return MidPageIndex;
     }
-
-
 
 
     public boolean helper_TupleInRangePage(Page page,Comparable clusteringKeyValue){
