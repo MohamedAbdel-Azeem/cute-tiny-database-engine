@@ -229,71 +229,78 @@ public class DBApp {
 		DBApp myDB = new DBApp();
 		myDB.init();
 
+		Hashtable htblColNameType = new Hashtable( );
+		htblColNameType.put("id", "java.lang.Integer");
+		htblColNameType.put("name", "java.lang.String");
+		htblColNameType.put("gpa", "java.lang.Double");
 
 
-//		Hashtable htblColNameValue = new Hashtable( );
-//		htblColNameValue.put("id", 2343432 );
-//		htblColNameValue.put("name", "Abd el satar");
-//		htblColNameValue.put("gpa", 0.95 );
-//		myDB.insertIntoTable( "First_Test" , htblColNameValue );
-//
-//		htblColNameValue.clear( );
-//		htblColNameValue.put("id", 453455 );
-//		htblColNameValue.put("name", "Ahmed Noor");
-//		htblColNameValue.put("gpa", 0.95);
-//		myDB.insertIntoTable( "First_Test" , htblColNameValue );
-//
-//		htblColNameValue.clear( );
-//		htblColNameValue.put("id", 5674567 );
-//		htblColNameValue.put("name", "Dalia Noor");
-//		htblColNameValue.put("gpa", 1.25 );
-//		myDB.insertIntoTable( "First_Test" , htblColNameValue );
+		myDB.createTable("First_Test", "id", htblColNameType);
+
+		Hashtable htblColNameValue = new Hashtable( );
+		htblColNameValue.put("id", 1 );
+		htblColNameValue.put("name", "Abd el satar");
+		htblColNameValue.put("gpa", 0.95 );
+		myDB.insertIntoTable( "First_Test" , htblColNameValue );
+
+		htblColNameValue.clear( );
+		htblColNameValue.put("id", 10 );
+		htblColNameValue.put("name", "Ahmed Noor");
+		htblColNameValue.put("gpa", 0.95);
+		myDB.insertIntoTable( "First_Test" , htblColNameValue );
+
+		htblColNameValue.clear( );
+		htblColNameValue.put("id", 9 );
+		htblColNameValue.put("name", "Dalia Noor");
+		htblColNameValue.put("gpa", 1.25 );
+		myDB.insertIntoTable( "First_Test" , htblColNameValue );
 ////
-//		htblColNameValue.clear( );
-//		htblColNameValue.put("id", 23498 );
-//		htblColNameValue.put("name", "John Noor");
-//		htblColNameValue.put("gpa",  "kk" );
-//		myDB.insertIntoTable( "First_Test" , htblColNameValue );
+
+		htblColNameValue.clear( );
+		htblColNameValue.put("id",  45345 );
+		htblColNameValue.put("name", "Zaky Noor");
+		htblColNameValue.put("gpa",  0.88 );
+		myDB.insertIntoTable( "First_Test" , htblColNameValue );
+
+		htblColNameValue.clear( );
+		htblColNameValue.put("id",  95345);
+		htblColNameValue.put("name", "John Noor");
+		htblColNameValue.put("gpa",  1.5 );
+		myDB.insertIntoTable( "First_Test" , htblColNameValue );
 //
-//		htblColNameValue.clear( );
-//		htblColNameValue.put("id",  45345 );
-//		htblColNameValue.put("name", "Zaky Noor");
-//		htblColNameValue.put("gpa",  0.88 );
-//		myDB.insertIntoTable( "First_Test" , htblColNameValue );
+		Table first_test = (Table) deserialize("First_Test");
+		System.out.println(first_test);
+
+//		SQLTerm[] arrSQLTerms;
+//		arrSQLTerms = new SQLTerm[3];
 //
-//		Table first_test = (Table) deserialize("First_Test");
-//		System.out.println(first_test);
-
-		SQLTerm[] arrSQLTerms;
-		arrSQLTerms = new SQLTerm[3];
-
-		arrSQLTerms[0] = new SQLTerm();
-		arrSQLTerms[1] = new SQLTerm();
-		arrSQLTerms[2] = new SQLTerm();
-
-		arrSQLTerms[0]._strTableName = "First_Test";
-		arrSQLTerms[0]._strColumnName= "gpa";
-		arrSQLTerms[0]._strOperator = "<";
-		arrSQLTerms[0]._objValue = new Double(1.0);
-		arrSQLTerms[1]._strTableName = "First_Test";
-		arrSQLTerms[1]._strColumnName= "gpa";
-		arrSQLTerms[1]._strOperator = ">";
-		arrSQLTerms[1]._objValue = new Double(0.9);
-		arrSQLTerms[2]._strTableName = "First_Test";
-		arrSQLTerms[2]._strColumnName= "name";
-		arrSQLTerms[2]._strOperator = "=";
-		arrSQLTerms[2]._objValue = "Zaky Noor";
-		String[] strarrOperators = new String[2];
-		strarrOperators[0] = "AND";
-		strarrOperators[1] = "OR";
-
-
-//		 Should Output 3 Records , Two with GPA 0.95 and One with GPA 0.88
-		Iterator resultSet = myDB.selectFromTable(arrSQLTerms , strarrOperators);
-		while (resultSet.hasNext()){
-			System.out.print("Record Found: ");
-			System.out.print(resultSet.next());
-		}
+//		arrSQLTerms[0] = new SQLTerm();
+//		arrSQLTerms[1] = new SQLTerm();
+//		arrSQLTerms[2] = new SQLTerm();
+//
+//		arrSQLTerms[0]._strTableName = "First_Test";
+//		arrSQLTerms[0]._strColumnName= "gpa";
+//		arrSQLTerms[0]._strOperator = "<";
+//		arrSQLTerms[0]._objValue = new Double(1.0);
+//		arrSQLTerms[1]._strTableName = "First_Test";
+//		arrSQLTerms[1]._strColumnName= "gpa";
+//		arrSQLTerms[1]._strOperator = ">";
+//		arrSQLTerms[1]._objValue = new Double(0.9);
+//		arrSQLTerms[2]._strTableName = "First_Test";
+//		arrSQLTerms[2]._strColumnName= "name";
+//		arrSQLTerms[2]._strOperator = "=";
+//		arrSQLTerms[2]._objValue = "Zaky Noor";
+//		String[] strarrOperators = new String[2];
+//		strarrOperators[0] = "AND";
+//		strarrOperators[1] = "OR";
+//
+//
+////		 Should Output 3 Records , Two with GPA 0.95 and One with GPA 0.88
+//		Iterator resultSet = myDB.selectFromTable(arrSQLTerms , strarrOperators);
+//		while (resultSet.hasNext()){
+//			System.out.print("Record Found: ");
+//			System.out.print(resultSet.next());
+//		}
 
 
 	}

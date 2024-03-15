@@ -19,8 +19,8 @@ public class Page implements Serializable {
         return tuples.size() == maxNumOfRows;
     }
 
-    public void addTuple(Tuple tuple){
-        tuples.addFirst(tuple);
+    public void addTuple(int index,Tuple tuple){
+        tuples.add(index,tuple);
     }
 
     public Vector<Tuple> getTuples(){
