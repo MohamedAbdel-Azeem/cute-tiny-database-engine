@@ -96,7 +96,8 @@ public class DBApp {
 			serialize(myTable,strTableName);
 			return;
 		} catch (Exception e){
-			System.out.println(e.getMessage());
+//			System.out.println(e.getMessage());
+			e.printStackTrace();
 		}
 	}
 
@@ -238,36 +239,51 @@ public class DBApp {
 		myDB.createTable("First_Test", "id", htblColNameType);
 
 		Hashtable htblColNameValue = new Hashtable( );
-		htblColNameValue.put("id", 1 );
-		htblColNameValue.put("name", "Abd el satar");
-		htblColNameValue.put("gpa", 0.95 );
-		myDB.insertIntoTable( "First_Test" , htblColNameValue );
+
+//		htblColNameValue.put("id", 1 );
+//		htblColNameValue.put("name", "Abd el satar");
+//		htblColNameValue.put("gpa", 0.95 );
+//		myDB.insertIntoTable( "First_Test" , htblColNameValue );
+//
+//		htblColNameValue.clear( );
+//		htblColNameValue.put("id", 10 );
+//		htblColNameValue.put("name", "Ahmed Noor");
+//		htblColNameValue.put("gpa", 0.95);
+//		myDB.insertIntoTable( "First_Test" , htblColNameValue );
+//
+//		htblColNameValue.clear( );
+//		htblColNameValue.put("id", 9 );
+//		htblColNameValue.put("name", "Dalia Noor");
+//		htblColNameValue.put("gpa", 1.25 );
+//		myDB.insertIntoTable( "First_Test" , htblColNameValue );
+//////
+//
+//		htblColNameValue.clear( );
+//		htblColNameValue.put("id",  45345 );
+//		htblColNameValue.put("name", "Zaky Noor");
+//		htblColNameValue.put("gpa",  0.88 );
+//		myDB.insertIntoTable( "First_Test" , htblColNameValue );
+//
+//		htblColNameValue.clear( );
+//		htblColNameValue.put("id",  95345);
+//		htblColNameValue.put("name", "John Noor");
+//		htblColNameValue.put("gpa",  1.5 );
+//		myDB.insertIntoTable( "First_Test" , htblColNameValue );
+//
+//		htblColNameValue.clear( );
+//		htblColNameValue.put("id",  100000);
+//		htblColNameValue.put("name", "John Noor");
+//		htblColNameValue.put("gpa",  1.5 );
+//		myDB.insertIntoTable( "First_Test" , htblColNameValue );
 
 		htblColNameValue.clear( );
-		htblColNameValue.put("id", 10 );
-		htblColNameValue.put("name", "Ahmed Noor");
-		htblColNameValue.put("gpa", 0.95);
-		myDB.insertIntoTable( "First_Test" , htblColNameValue );
-
-		htblColNameValue.clear( );
-		htblColNameValue.put("id", 9 );
-		htblColNameValue.put("name", "Dalia Noor");
-		htblColNameValue.put("gpa", 1.25 );
-		myDB.insertIntoTable( "First_Test" , htblColNameValue );
-////
-
-		htblColNameValue.clear( );
-		htblColNameValue.put("id",  45345 );
-		htblColNameValue.put("name", "Zaky Noor");
-		htblColNameValue.put("gpa",  0.88 );
-		myDB.insertIntoTable( "First_Test" , htblColNameValue );
-
-		htblColNameValue.clear( );
-		htblColNameValue.put("id",  95345);
+		htblColNameValue.put("id",  500);
 		htblColNameValue.put("name", "John Noor");
 		htblColNameValue.put("gpa",  1.5 );
 		myDB.insertIntoTable( "First_Test" , htblColNameValue );
-//
+
+
+
 		Table first_test = (Table) deserialize("First_Test");
 		System.out.println(first_test);
 
