@@ -276,7 +276,7 @@ public class DBApp {
 //		myDB.insertIntoTable( "First_Test" , htblColNameValue );
 
 		htblColNameValue.clear( );
-		htblColNameValue.put("id",  1);
+		htblColNameValue.put("id",  15);
 		htblColNameValue.put("name", "John Noor");
 		htblColNameValue.put("gpa",  1.5 );
 		myDB.insertIntoTable( "First_Test" , htblColNameValue );
