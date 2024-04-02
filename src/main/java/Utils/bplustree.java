@@ -11,6 +11,10 @@ public class bplustree implements Serializable{
 
 	/*~~~~~~~~~~~~~~~~ HELPER FUNCTIONS ~~~~~~~~~~~~~~~~*/
 
+	public Comparable[] getRoot(){
+		return root.keys;
+	}
+
 	/**
 	 * This method performs a standard binary search on a sorted
 	 * DictionaryPair[] and returns the index of the dictionary pair

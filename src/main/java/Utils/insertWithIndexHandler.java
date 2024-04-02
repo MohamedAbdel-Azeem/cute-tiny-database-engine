@@ -31,9 +31,11 @@ public class insertWithIndexHandler {
             duplicates = new Vector<>();
             duplicates.add(pageName);
             index.insert(indexKey,duplicates);
+            Serializer.serialize(index,indexName);
             return;
         }
         duplicates.add(pageName);
+        Serializer.serialize(index,indexName);
         return;
     }
     
@@ -51,8 +53,12 @@ public class insertWithIndexHandler {
     private static void handleSingleIndexShifting(String indexName, Comparable value, String oldPageName, String newPageName) {
         bplustree index = (bplustree) Serializer.deserialize(indexName);
         Vector<String> PageValues = index.search(value);
+        if (PageValues == null){
+            return;
+        }
         PageValues.remove(oldPageName);
         PageValues.add(newPageName);
+        Serializer.serialize(index,indexName);
     }
 
 
