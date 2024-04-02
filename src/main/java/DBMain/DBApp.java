@@ -19,6 +19,7 @@ import Utils.bplustree;
 import Utils.insertWithIndexHandler;
 import Utils.metaFile;
 import Utils.Configurator;
+import static Utils.TableLookupOps.*;
 
 public class DBApp {
 
@@ -134,8 +135,24 @@ public class DBApp {
 	public void updateTable(String strTableName, 
 							String strClusteringKeyValue,
 							Hashtable<String,Object> htblColNameValue   )  throws DBAppException{
-	
-		throw new DBAppException("not implemented yet");
+		Table myTable = (Table) deserialize(strTableName);
+		Hashtable<String,String> htblColNameType = metaFile.extractTblCols(strTableName);
+		String ClusteringKeyType = htblColNameType.get(myTable.getClusteringKeyColumn());
+		Comparable ClusteringKeyValueObject;
+		switch (ClusteringKeyType){
+			case "java.lang.Integer":
+				ClusteringKeyValueObject = Integer.parseInt(strClusteringKeyValue);
+				break;
+			case "java.lang.String":
+				ClusteringKeyValueObject = strClusteringKeyValue;
+				break;
+			case "java.lang.Double":
+				ClusteringKeyValueObject = Double.parseDouble(strClusteringKeyValue);
+				break;
+			default:
+				throw new DBAppException("Invalid Data Type");
+		}
+		myTable.updateTuple(ClusteringKeyValueObject,htblColNameValue);
 	}
 
 
@@ -179,12 +196,12 @@ public class DBApp {
 //		htblColNameType.put("id", "java.lang.Integer");
 //		htblColNameType.put("name", "java.lang.String");
 //		htblColNameType.put("gpa", "java.lang.Double");
-//
-//
-//		myDB.createTable("First_Test", "id", htblColNameType);
 ////
-		Hashtable htblColNameValue = new Hashtable( );
-//
+////
+//		myDB.createTable("First_Test", "id", htblColNameType);
+//////
+//		Hashtable htblColNameValue = new Hashtable( );
+////
 //		htblColNameValue.put("id", 1 );
 //		htblColNameValue.put("name", "Abd el satar");
 //		htblColNameValue.put("gpa", 0.95 );
@@ -229,9 +246,20 @@ public class DBApp {
 
 
 
+//		myDB.createIndex("First_Test","gpa","gpaIndex");
+//		myDB.createIndex("First_Test","id","idIndex");
+
+		Hashtable<String,Object> htblColNameValue = new Hashtable( );
+		htblColNameValue.put("gpa",  1.0 );
+		myDB.updateTable("First_Test","10",htblColNameValue);
 
 
-//		myDB.createIndex("First_Test","id","myIndex");
+		Table first_test = (Table) deserialize("First_Test");
+		System.out.println(first_test);
+
+		bplustree myGpaIndex = (bplustree) deserialize("gpaIndex");
+		System.out.println(myGpaIndex.search(1.0));
+		System.out.println(myGpaIndex.search(0.95));
 
 //		htblColNameValue.clear( );
 //		htblColNameValue.put("id",  5);

@@ -16,20 +16,20 @@ public class Tuple implements Serializable {
         return values.get(columnName);
     }
 
-    public void setValue(String columnName, Object value) {
-        values.put(columnName, value);
+    public void updateValues(Hashtable<String,Object> newValue){
+        values = newValue;
     }
 
     public boolean satisfySQLTerm(String strColName , String Operator , Object comparingObject){
-        switch (Operator){
-            case ">": return ((Comparable)values.get(strColName)).compareTo(comparingObject) > 0;
-            case "<": return ((Comparable)values.get(strColName)).compareTo(comparingObject) < 0;
-            case "=": return ((Comparable)values.get(strColName)).compareTo(comparingObject) == 0;
-            case ">=": return ((Comparable)values.get(strColName)).compareTo(comparingObject) >= 0;
-            case "<=": return ((Comparable)values.get(strColName)).compareTo(comparingObject) <= 0;
-            case "!=": return ((Comparable)values.get(strColName)).compareTo(comparingObject) != 0;
-            default: return false;
-        }
+        return switch (Operator) {
+            case ">" -> ((Comparable) values.get(strColName)).compareTo(comparingObject) > 0;
+            case "<" -> ((Comparable) values.get(strColName)).compareTo(comparingObject) < 0;
+            case "=" -> ((Comparable) values.get(strColName)).compareTo(comparingObject) == 0;
+            case ">=" -> ((Comparable) values.get(strColName)).compareTo(comparingObject) >= 0;
+            case "<=" -> ((Comparable) values.get(strColName)).compareTo(comparingObject) <= 0;
+            case "!=" -> ((Comparable) values.get(strColName)).compareTo(comparingObject) != 0;
+            default -> false;
+        };
     }
 
 
@@ -95,15 +95,8 @@ public class Tuple implements Serializable {
         return sb.toString() + "\n";
     }
 
-
-    public static void main(String[] args) {
-        Hashtable<String, Object> htblColNameValue = new Hashtable<>();
-        htblColNameValue.put("id", 1);
-        htblColNameValue.put("name", "Ahmed");
-
-        Tuple t = new Tuple(htblColNameValue);
-
-        htblColNameValue.clear();
+    public Hashtable<String, Object> getValues() {
+        return values;
     }
 
 }

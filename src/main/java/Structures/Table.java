@@ -12,6 +12,7 @@ import static Utils.metaFile.extractTblCols;
 import static Utils.metaFile.wasIndexMade;
 import static Utils.TableLookupOps.*;
 import Utils.insertWithIndexHandler;
+import Utils.updateWithIndexHandler;
 
 public class Table implements Serializable {
     private String tableName;
@@ -87,6 +88,8 @@ public class Table implements Serializable {
     // Check Uniqueness of Primary Key
     public  boolean isValid(Hashtable<String,Object> htblColNameValue)  { // Check Data Types and Uniqueness of Primary Key
             Hashtable<String,String> ColDataTypes= extractTblCols(this.tableName);
+            if (ColDataTypes.size() != htblColNameValue.size())
+                return false;
             Iterator<String>iterator = (Iterator<String>) ColDataTypes.keys();
             boolean flag=true;
             // check for correct data types
@@ -109,21 +112,6 @@ public class Table implements Serializable {
             return  true;
     }
 
-//  private void insertIntoTree(Comparable key,String indexId,String pageName){
-//
-//        bplustree bp= (bplustree) Serializer.deserialize(indexId);
-//      if(bp.search(key)!=null){
-//          HashSet<String> hashSet1=bp.search(key);
-//          hashSet1.add(pageName);
-//      }
-//      else{
-//          HashSet<String> hashSet=new HashSet<String>();
-//          hashSet.add(pageName);
-//          bp.insert(key,hashSet);
-//      }
-//      Serializer.serialize(bp,indexId);
-//
-//  }
 
     public String toString(){
         StringBuilder sb = new StringBuilder();
@@ -136,12 +124,38 @@ public class Table implements Serializable {
         return sb.toString();
     }
 
+    public void updateTuple(Comparable clusteringKeyValue , Hashtable<String,Object> newValues) throws DBAppException{
+        if (pageNames.isEmpty()){
+            throw new DBAppException("Tuple is not Found");
+        }
+        int pageIndex = helper_getPageIndex(clusteringKeyValue,pageNames,this.ClusteringKeyColumn);
+        Page page = (Page) deserialize(pageNames.get(pageIndex));
+        for (Tuple tuple : page.getTuples()){
+            if (tuple.getValue(this.ClusteringKeyColumn).equals(clusteringKeyValue)){
+                Hashtable<String,Object> updatedValues = new Hashtable<String,Object>(tuple.getValues());
+                for (String colName : newValues.keySet()){ // Add new Values to the Tuple
+                    updatedValues.put(colName,newValues.get(colName));
+                }
+                if (! this.isValid(updatedValues)){
+                    throw new DBAppException("Invalid Tuple Data Types");
+                }
+                updateWithIndexHandler.updateIntoIndex(this.tableName,pageNames.get(pageIndex),newValues,tuple);
+                tuple.updateValues(updatedValues);
+                Serializer.serialize(page,pageNames.get(pageIndex));
+                return;
+            }
+        }
+
+    }
+
 
 
     public Vector<String> getPageNames() {
         return pageNames;
     }
-
+    public String getClusteringKeyColumn() {
+        return ClusteringKeyColumn;
+    }
 
 
 }

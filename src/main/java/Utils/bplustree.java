@@ -406,7 +406,7 @@ public class bplustree implements Serializable{
 	 * @param key: an integer key that corresponds with an existing dictionary
 	 *             pair
 	 */
-	public void delete(int key) {
+	public void delete(Comparable key) {
 		if (isEmpty()) {
 
 			/* Flow of execution goes here when B+ tree has no dictionary pairs */

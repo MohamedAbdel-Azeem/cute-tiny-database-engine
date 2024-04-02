@@ -3,6 +3,7 @@ package Utils;
 import Structures.Page;
 import Structures.Tuple;
 
+import java.util.Hashtable;
 import java.util.Vector;
 
 import static Utils.Serializer.deserialize;
@@ -81,6 +82,14 @@ public class TableLookupOps {
             continue;
         }
         return MidPageIndex;
+    }
+
+
+    public static int helper_getPageIndex(Comparable ClusteringKeyValue, Vector<String> pageNames, String ClusteringKeyColumn){
+        Hashtable<String,Object> htblColNameValue = new Hashtable<>();
+        htblColNameValue.put(ClusteringKeyColumn, ClusteringKeyValue);
+        Tuple adapterTuple = new Tuple(htblColNameValue);
+        return helper_getPageIndex(adapterTuple, pageNames, ClusteringKeyColumn);
     }
 
 }
