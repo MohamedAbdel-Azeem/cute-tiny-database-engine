@@ -11,6 +11,7 @@ import static Utils.Serializer.deserialize;
 import static Utils.metaFile.extractTblCols;
 import static Utils.metaFile.wasIndexMade;
 import static Utils.TableLookupOps.*;
+import Utils.insertWithIndexHandler;
 
 public class Table implements Serializable {
     private String tableName;
@@ -39,6 +40,7 @@ public class Table implements Serializable {
             String pageName = tableName+pageNames.size();
             pageNames.add(pageName);
             Serializer.serialize(newPage,pageName);
+            insertWithIndexHandler.insertIntoIndex(this.tableName,pageName,newTuple);
             return;
         }
 
@@ -48,12 +50,14 @@ public class Table implements Serializable {
         if (insertIndex == -1) {
             throw new DBAppException("Primary Key Violation");
         }
+        insertWithIndexHandler.insertIntoIndex(this.tableName,this.getPageNames().get(PageIndex),newTuple);
         if (page.isFull()){
             Tuple lastTuple = page.getTuples().removeLast();
             page.getTuples().insertElementAt(newTuple, insertIndex);
             Serializer.serialize(page,pageNames.get(PageIndex));
             for (int j = PageIndex+1 ; j < pageNames.size(); j++){
                 Page nextPage = (Page) deserialize(pageNames.get(j));
+                insertWithIndexHandler.handleInsertionShifting(this.tableName,pageNames.get(j-1),pageNames.get(j),lastTuple);
                 if (! nextPage.isFull()){
                     nextPage.getTuples().addFirst(lastTuple);
                     Serializer.serialize(nextPage,pageNames.get(j));
@@ -69,6 +73,7 @@ public class Table implements Serializable {
             String newPageName = tableName+pageNames.size();
             pageNames.add(newPageName);
             Serializer.serialize(newPage,newPageName);
+            insertWithIndexHandler.handleInsertionShifting(this.tableName,pageNames.get(pageNames.size()-2),newPageName,lastTuple);
             return;
         } else {
             page.getTuples().insertElementAt(newTuple, insertIndex);

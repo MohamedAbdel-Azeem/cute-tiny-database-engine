@@ -20,13 +20,15 @@ import static Utils.metaFile.*;
 
 import Utils.Serializer;
 import Utils.bplustree;
+import Utils.insertWithIndexHandler;
+import Utils.metaFile;
 
 public class DBApp {
 
 
 
 	public DBApp( ){
-		
+		this.init();
 	}
 
 	// this does whatever initialization you would like 
@@ -73,14 +75,36 @@ public class DBApp {
 		// check there does not index in that column and
 		//check if already data exists reinsert them in bplus tree
 		// there does not create bplus tree then serialize it and update metafile
-		String path= "./DB/"+strIndexName+".class.";
-		File file =new File(path);
+		String indexPath= "./DB/"+strIndexName+".class.";
+		File file =new File(indexPath);
 
-			if (file.exists()) {
-				throw new DBAppException("There already exists an index with that name");
+		if (file.exists())
+			throw new DBAppException("There already exists an index with that name");
+		if(wasIndexMade(strTableName).containsKey(strColName))
+			throw new DBAppException("There already exists an index for that column");
+
+		String tablePath = "./DB/"+strTableName+".class";
+		file = new File(tablePath);
+		if (!file.exists())
+			throw new DBAppException("Table does not exist");
+
+		bplustree myTree = new bplustree(3); // m is hardCoded for now to be added in the DBAPPConfig file
+		Table myTable = (Table) deserialize(strTableName);
+		Serializer.serialize(myTree,strIndexName);
+        try {
+            metaFile.updateOnMetaDataFile(strTableName,strColName,strIndexName,"B+tree");
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+        if (myTable.getPageNames().isEmpty())
+			return;
+		for (String pageName : myTable.getPageNames()){
+			Page page = (Page) deserialize(pageName);
+			for (Tuple tuple : page.getTuples()){
+				insertWithIndexHandler.insertIntoSingleIndex(strIndexName,(Comparable) tuple.getValue(strColName),pageName);
+			}
 		}
-			if(wasIndexMade(strTableName).containsKey(strColName))
-				throw new DBAppException("There already exists an index for that column");
+		return;
 	}
 
 
@@ -147,87 +171,7 @@ public class DBApp {
 
 
 	public static void main( String[] args )  throws DBAppException{
-
-//	try{
-//			String strTableName = "Student";
-//			DBMain.DBApp	dbApp = new DBMain.DBApp( );
-//
-//			Hashtable htblColNameType = new Hashtable( );
-//			htblColNameType.put("id", "java.lang.Integer");
-//			htblColNameType.put("name", "java.lang.String");
-//			htblColNameType.put("gpa", "java.lang.double");
-//			dbApp.createTable( strTableName, "id", htblColNameType );
-//			dbApp.createIndex( strTableName, "gpa", "gpaIndex" );
-//
-//			Hashtable htblColNameValue = new Hashtable( );
-//			htblColNameValue.put("id", new Integer( 2343432 ));
-//			htblColNameValue.put("name", new String("Ahmed Noor" ) );
-//			htblColNameValue.put("gpa", new Double( 0.95 ) );
-//			dbApp.insertIntoTable( strTableName , htblColNameValue );
-//
-//			htblColNameValue.clear( );
-//			htblColNameValue.put("id", new Integer( 453455 ));
-//			htblColNameValue.put("name", new String("Ahmed Noor" ) );
-//			htblColNameValue.put("gpa", new Double( 0.95 ) );
-//			dbApp.insertIntoTable( strTableName , htblColNameValue );
-//
-//			htblColNameValue.clear( );
-//			htblColNameValue.put("id", new Integer( 5674567 ));
-//			htblColNameValue.put("name", new String("Dalia Noor" ) );
-//			htblColNameValue.put("gpa", new Double( 1.25 ) );
-//			dbApp.insertIntoTable( strTableName , htblColNameValue );
-//
-//			htblColNameValue.clear( );
-//			htblColNameValue.put("id", new Integer( 23498 ));
-//			htblColNameValue.put("name", new String("John Noor" ) );
-//			htblColNameValue.put("gpa", new Double( 1.5 ) );
-//			dbApp.insertIntoTable( strTableName , htblColNameValue );
-//
-//			htblColNameValue.clear( );
-//			htblColNameValue.put("id", new Integer( 78452 ));
-//			htblColNameValue.put("name", new String("Zaky Noor" ) );
-//			htblColNameValue.put("gpa", new Double( 0.88 ) );
-//			dbApp.insertIntoTable( strTableName , htblColNameValue );
-//
-//
-//			DBMain.SQLTerm[] arrSQLTerms;
-//			arrSQLTerms = new DBMain.SQLTerm[2];
-//			arrSQLTerms[0]._strTableName =  "Student";
-//			arrSQLTerms[0]._strColumnName=  "name";
-//			arrSQLTerms[0]._strOperator  =  "=";
-//			arrSQLTerms[0]._objValue     =  "John Noor";
-//
-//			arrSQLTerms[1]._strTableName =  "Student";
-//			arrSQLTerms[1]._strColumnName=  "gpa";
-//			arrSQLTerms[1]._strOperator  =  "=";
-//			arrSQLTerms[1]._objValue     =  new Double( 1.5 );
-//
-//			String[]strarrOperators = new String[1];
-//			strarrOperators[0] = "OR";
-//			// select * from Student where name = "John Noor" or gpa = 1.5;
-//			Iterator resultSet = dbApp.selectFromTable(arrSQLTerms , strarrOperators);
-//		}
-//		catch(Exception exp){
-//			exp.printStackTrace( );
-//		}
-
-//		DBApp myDB = new DBApp();
-//		myDB.init();
-//		try {
-//			Class cls = Class.forName("java.lang.String");
-//			boolean b1
-//					= cls.isInstance("hello");
-//			System.out.println(b1);
-////			boolean b2 = cls.isInstance(new A());
-////			System.out.println(b2);
-//		}
-//		catch (Throwable e) {
-//			System.err.println(e);
-//		}
-//
-
 		DBApp myDB = new DBApp();
-		myDB.init();
 
 		Hashtable htblColNameType = new Hashtable( );
 		htblColNameType.put("id", "java.lang.Integer");

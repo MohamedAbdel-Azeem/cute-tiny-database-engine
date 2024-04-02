@@ -29,6 +29,7 @@ public class metaFile {
         }
     }
 
+    //adding new Table to metadata file
     public static void appendOnMetaDataFile(String strTableName, String strClusteringKeyColumn, Hashtable<String,String> htblColNameType){
         System.out.println("Appending to metadata file");
         Iterator<Map.Entry<String, String>> iterator = htblColNameType.entrySet().iterator();
@@ -46,6 +47,8 @@ public class metaFile {
 
     }
 
+
+    // adding new Index to metadata file
     public static void updateOnMetaDataFile(String inputStrTableName, String inputColName, String inputIndexName, String inputIndexType) throws Exception {
         String newCsvContent="";
         boolean found = false;
@@ -137,13 +140,5 @@ public class metaFile {
             return null;
         }
     }
-
-
-
-    public static void main(String[] args) {
-        Hashtable<String,String> htblColNameType = extractTblCols("First_Test");
-        System.out.println(htblColNameType);
-    }
-
 
 }
