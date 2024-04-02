@@ -20,5 +20,10 @@ public class Configurator {
         return Integer.parseInt(properties.getProperty("MaximumRowsCountinPage"));
     }
 
+    public static int getIndexNodeSize(){
+        Properties properties = readFile();
+        return Integer.parseInt(properties.getProperty("IndexNodeSize"));
+    }
+
 
 }

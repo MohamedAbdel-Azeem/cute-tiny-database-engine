@@ -6,7 +6,6 @@ import Structures.Table;
 import Structures.Tuple;
 
 import java.io.File;
-import java.io.Serializable;
 import java.util.*;
 
 import static Utils.Serializer.deserialize;
@@ -19,6 +18,7 @@ import Utils.Serializer;
 import Utils.bplustree;
 import Utils.insertWithIndexHandler;
 import Utils.metaFile;
+import Utils.Configurator;
 
 public class DBApp {
 
@@ -32,6 +32,10 @@ public class DBApp {
 	// or leave it empty if there is no code you want to 
 	// execute at application startup 
 	public void init( ){
+		File DBDirectory = new File("DB");
+		if (! DBDirectory.exists()){
+			DBDirectory.mkdir();
+		}
 		generateMetaDataFile();
 	}
 
@@ -85,7 +89,8 @@ public class DBApp {
 		if (!file.exists())
 			throw new DBAppException("Table does not exist");
 
-		bplustree myTree = new bplustree(3); // m is hardCoded for now to be added in the DBAPPConfig file
+		int m =Configurator.getIndexNodeSize();
+		bplustree myTree = new bplustree(m);
 		Table myTable = (Table) deserialize(strTableName);
 		Serializer.serialize(myTree,strIndexName);
         try {
@@ -234,11 +239,11 @@ public class DBApp {
 //		htblColNameValue.put("gpa",  1.5 );
 //		myDB.insertIntoTable( "First_Test" , htblColNameValue );
 
-		Table first_test = (Table) deserialize("First_Test");
-		System.out.println(first_test);
-
-		bplustree myidIndex = (bplustree) deserialize("myIndex");
-		System.out.println(myidIndex.search(9));
+//		Table first_test = (Table) deserialize("First_Test");
+//		System.out.println(first_test);
+//
+//		bplustree myidIndex = (bplustree) deserialize("myIndex");
+//		System.out.println(Arrays.toString(myidIndex.getRoot()));
 
 //		SQLTerm[] arrSQLTerms;
 //		arrSQLTerms = new SQLTerm[3];
