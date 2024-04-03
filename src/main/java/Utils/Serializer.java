@@ -41,10 +41,17 @@ public class Serializer {
             fileInputStream.close();
 
         } catch (Exception e) {
-            e.printStackTrace();
+            return null;
         }
 
         return object;
     }
+
+    public static void deleteFile(String pageName) {
+        String fileName = "./DB/"+pageName+".class";
+        File file = new File(fileName);
+        file.delete();
+    }
+
 
 }

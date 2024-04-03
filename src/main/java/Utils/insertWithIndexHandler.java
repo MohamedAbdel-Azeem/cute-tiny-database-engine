@@ -35,6 +35,8 @@ public class insertWithIndexHandler {
             return;
         }
         duplicates.add(pageName);
+        index.delete(indexKey);
+        index.insert(indexKey,duplicates);
         Serializer.serialize(index,indexName);
         return;
     }

@@ -13,6 +13,7 @@ import static Utils.metaFile.wasIndexMade;
 import static Utils.TableLookupOps.*;
 import Utils.insertWithIndexHandler;
 import Utils.updateWithIndexHandler;
+import Utils.deleteHandler;
 
 public class Table implements Serializable {
     private String tableName;
@@ -118,6 +119,7 @@ public class Table implements Serializable {
         sb.append("-------- Table Name: ").append(tableName).append("-------------\n");
         for (String pageName : pageNames){
             Page page = (Page) deserialize(pageName);
+            if (page == null) continue;
             sb.append("-Page Name: ").append(pageName).append("\n");
             sb.append(page.toString());
         }
@@ -146,6 +148,48 @@ public class Table implements Serializable {
             }
         }
 
+    }
+
+    public void deleteTuple(Hashtable<String,Object> htblColNameValue) throws DBAppException{
+        if (pageNames.isEmpty()){
+            throw new DBAppException("Tuple is not Found");
+        }
+        if (! deleteHandler.isValidDeleteQuery(this.tableName,htblColNameValue)){
+            throw new DBAppException("Invalid Delete Query");
+        }
+        Vector<String> targetPages = new Vector<String>();
+        Hashtable<String,String> indexedCols = wasIndexMade(this.tableName);
+        if (htblColNameValue.get(this.ClusteringKeyColumn) != null){
+            targetPages = deleteHandler.deleteWithClusteringKey(this.tableName,htblColNameValue);
+        } else {
+            if (indexedCols == null || indexedCols.isEmpty()){
+                targetPages = deleteHandler.deleteWithNothing(this.tableName,htblColNameValue);
+            } else {
+                for (String colName : htblColNameValue.keySet()){
+                    if (indexedCols.containsKey(colName)){
+                        targetPages = deleteHandler.deleteWithIndex((Comparable) htblColNameValue.get(colName),indexedCols.get(colName),htblColNameValue);
+                        break;
+                    }
+                }
+                if (targetPages.isEmpty()){
+                    targetPages = deleteHandler.deleteWithNothing(this.tableName,htblColNameValue);
+                }
+            }
+
+        }
+        deleteHandler.deleteFromIndexes(targetPages,htblColNameValue,indexedCols);
+        // Look through each target Page and Check if the Tuple match if yes delete it
+        for (String pageName : targetPages){
+            Page page = (Page) deserialize(pageName);
+            page.getTuples().removeIf(tuple -> tuple.isEqual(htblColNameValue));
+            if (page.getTuples().isEmpty()){
+                pageNames.remove(pageName);
+                Serializer.deleteFile(pageName);
+            } else {
+                Serializer.serialize(page,pageName);
+            }
+        }
+        System.out.println("Tuples Deleted Successfully");
     }
 
 

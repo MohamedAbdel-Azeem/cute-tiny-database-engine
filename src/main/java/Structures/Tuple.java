@@ -12,9 +12,7 @@ public class Tuple implements Serializable {
     public Tuple(Hashtable<String,Object> values){
         this.values = values;
     }
-    public Object getValue(String columnName) {
-        return values.get(columnName);
-    }
+
 
     public void updateValues(Hashtable<String,Object> newValue){
         values = newValue;
@@ -82,6 +80,16 @@ public class Tuple implements Serializable {
 
     }
 
+    //ignore if the htblColNameValue has less columns than the Original tuple
+    public boolean isEqual(Hashtable<String, Object> htblColNameValue) {
+        for (String key : htblColNameValue.keySet()) {
+            if (!values.get(key).equals(htblColNameValue.get(key))) {
+                return false;
+            }
+        }
+        return true;
+    }
+
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
@@ -97,6 +105,9 @@ public class Tuple implements Serializable {
 
     public Hashtable<String, Object> getValues() {
         return values;
+    }
+    public Object getValue(String columnName) {
+        return values.get(columnName);
     }
 
 }
