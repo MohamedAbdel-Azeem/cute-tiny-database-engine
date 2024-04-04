@@ -1,6 +1,6 @@
 grammar SQLGrammar;
 
-startRule
+sqlRule
     : createTable
     | createIndex
     | insertIntoTable
@@ -17,7 +17,7 @@ deleteFromTable: 'DELETE' 'FROM' tableName 'WHERE' columnName '=' columnValue;
 selectFromTable: 'SELECT' '*' 'FROM' tableName 'WHERE' columnName operator columnValue (starrOperators columnName operator columnValue)*;
 
 primaryColumnDefinition : columnDefinition 'PRIMARY KEY';
-columnDefinition : columnName ':' dataType ;
+columnDefinition : dataType ':' columnName ;
 columnName : STRING;
 columnValue : STRING;
 dataType : 'INT' | 'DOUBLE' | 'STRING';
