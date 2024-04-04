@@ -1,5 +1,5 @@
 // Generated from C:/Users/moham/OneDrive/Desktop/cute-tiny-database-engine/src/main/java/SQLParser/SQLGrammar.g4 by ANTLR 4.13.1
-package SQLParser;
+package gen.SQLParser;
 import org.antlr.v4.runtime.tree.ParseTreeListener;
 
 /**
