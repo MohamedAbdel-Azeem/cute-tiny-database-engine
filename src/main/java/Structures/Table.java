@@ -54,8 +54,8 @@ public class Table implements Serializable {
         }
         insertWithIndexHandler.insertIntoIndex(this.tableName,this.getPageNames().get(PageIndex),newTuple);
         if (page.isFull()){
-            Tuple lastTuple = page.getTuples().removeLast();
             page.getTuples().insertElementAt(newTuple, insertIndex);
+            Tuple lastTuple = page.getTuples().removeLast();
             Serializer.serialize(page,pageNames.get(PageIndex));
             for (int j = PageIndex+1 ; j < pageNames.size(); j++){
                 Page nextPage = (Page) deserialize(pageNames.get(j));
