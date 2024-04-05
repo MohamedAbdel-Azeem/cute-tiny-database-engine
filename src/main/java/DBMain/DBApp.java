@@ -123,7 +123,7 @@ public class DBApp {
 			serialize(myTable,strTableName);
 			return;
 		} catch (Exception e){
-			System.out.println(e.getMessage());
+			e.printStackTrace();
 		}
 	}
 
@@ -190,88 +190,10 @@ public class DBApp {
 
 
 	public static void main( String[] args )  throws DBAppException{
-		DBApp myDB = new DBApp();
+//		DBApp myDB = new DBApp();
 
-//		Hashtable htblColNameType = new Hashtable( );
-//		htblColNameType.put("id", "java.lang.Integer");
-//		htblColNameType.put("name", "java.lang.String");
-//		htblColNameType.put("gpa", "java.lang.Double");
-////
-////
-//		myDB.createTable("First_Test", "id", htblColNameType);
-//////
-//		Hashtable htblColNameValue = new Hashtable( );
-////
-//		htblColNameValue.put("id", 1 );
-//		htblColNameValue.put("name", "Abd el satar");
-//		htblColNameValue.put("gpa", 0.95 );
-//		myDB.insertIntoTable( "First_Test" , htblColNameValue );
-//
-//		htblColNameValue.clear( );
-//		htblColNameValue.put("id", 10 );
-//		htblColNameValue.put("name", "Ahmed Noor");
-//		htblColNameValue.put("gpa", 0.95);
-//		myDB.insertIntoTable( "First_Test" , htblColNameValue );
-//
-//		htblColNameValue.clear( );
-//		htblColNameValue.put("id", 9 );
-//		htblColNameValue.put("name", "Dalia Noor");
-//		htblColNameValue.put("gpa", 1.25 );
-//		myDB.insertIntoTable( "First_Test" , htblColNameValue );
-////
-//
-//		htblColNameValue.clear( );
-//		htblColNameValue.put("id",  7500 );
-//		htblColNameValue.put("name", "Zaky Noor");
-//		htblColNameValue.put("gpa",  0.88 );
-//		myDB.insertIntoTable( "First_Test" , htblColNameValue );
-//
-//		htblColNameValue.clear( );
-//		htblColNameValue.put("id",  5750);
-//		htblColNameValue.put("name", "John Noor");
-//		htblColNameValue.put("gpa",  1.5 );
-//		myDB.insertIntoTable( "First_Test" , htblColNameValue );
-//
-//		htblColNameValue.clear( );
-//		htblColNameValue.put("id",  100000);
-//		htblColNameValue.put("name", "John Noor");
-//		htblColNameValue.put("gpa",  1.5 );
-//		myDB.insertIntoTable( "First_Test" , htblColNameValue );
-//
-//		htblColNameValue.clear( );
-//		htblColNameValue.put("id",  15);
-//		htblColNameValue.put("name", "John Noor");
-//		htblColNameValue.put("gpa",  1.5 );
-//		myDB.insertIntoTable( "First_Test" , htblColNameValue );
-
-
-
-//		myDB.createIndex("First_Test","gpa","gpaIndex");
-//		myDB.createIndex("First_Test","id","idIndex");
-
-		Hashtable<String,Object> htblColNameValue = new Hashtable( );
-		htblColNameValue.put("gpa",  1.0 );
-		myDB.updateTable("First_Test","10",htblColNameValue);
-
-
-		Table first_test = (Table) deserialize("First_Test");
-		System.out.println(first_test);
-
-		bplustree myGpaIndex = (bplustree) deserialize("gpaIndex");
-		System.out.println(myGpaIndex.search(1.0));
-		System.out.println(myGpaIndex.search(0.95));
-
-//		htblColNameValue.clear( );
-//		htblColNameValue.put("id",  5);
-//		htblColNameValue.put("name", "John Noor");
-//		htblColNameValue.put("gpa",  1.5 );
-//		myDB.insertIntoTable( "First_Test" , htblColNameValue );
-
-//		Table first_test = (Table) deserialize("First_Test");
-//		System.out.println(first_test);
-//
-//		bplustree myidIndex = (bplustree) deserialize("myIndex");
-//		System.out.println(Arrays.toString(myidIndex.getRoot()));
+		Table myTable = (Table) deserialize("basmagya");
+		System.out.println(myTable);
 
 //		SQLTerm[] arrSQLTerms;
 //		arrSQLTerms = new SQLTerm[3];
