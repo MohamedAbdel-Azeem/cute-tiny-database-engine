@@ -8,12 +8,15 @@ public class bplustree implements Serializable{
 	int m;
 	InternalNode root;
 	LeafNode firstLeaf;
-
+	public Comparable maxValue;
+	public Comparable minValue;
 	/*~~~~~~~~~~~~~~~~ HELPER FUNCTIONS ~~~~~~~~~~~~~~~~*/
 
 	public Comparable[] getRoot(){
 		return root.keys;
 	}
+
+
 
 	/**
 	 * This method performs a standard binary search on a sorted
@@ -549,7 +552,8 @@ public class bplustree implements Serializable{
 		if (isEmpty()) {
 
 			/* Flow of execution goes here only when first insert takes place */
-
+			maxValue = key;
+			minValue = key;
 			// Create leaf node as first node in B plus tree (root is null)
 			LeafNode ln = new LeafNode(this.m, new DictionaryPair(key, value));
 
@@ -557,7 +561,12 @@ public class bplustree implements Serializable{
 			this.firstLeaf = ln;
 
 		} else {
-
+			if (key.compareTo(maxValue)>0) {
+				maxValue = key;
+			}
+			if (key.compareTo(minValue)<0) {
+				minValue = key;
+			}
 			// Find leaf node to insert into
 			LeafNode ln = (this.root == null) ? this.firstLeaf :
 					findLeafNode(key);

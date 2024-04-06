@@ -9,6 +9,8 @@ import java.io.File;
 import java.util.*;
 
 import static Utils.Selection.CanSmartSearch.canSmartSearch;
+import static Utils.Selection.ClusteringKeySelect.ClusteringKeySelect;
+import static Utils.Selection.IndexSelect.indexSelect;
 import static Utils.Serializer.deserialize;
 
 import static Utils.Serializer.serialize;
@@ -176,12 +178,13 @@ public class DBApp {
 		Hashtable<String,String> indexedCols = metaFile.wasIndexMade(arrSQLTerms[0]._strTableName);
 		SelectionMethods selectionMethod = canSmartSearch(arrSQLTerms,strarrOperators,myTable.getClusteringKeyColumn(),indexedCols);
 		if (selectionMethod == SelectionMethods.LINEAR){
-			return LinearSelect.LinearSelect(arrSQLTerms,strarrOperators);
+			return LinearSelect.LinearSelect(arrSQLTerms,strarrOperators,myTable);
 		} else if (selectionMethod == SelectionMethods.INDEX){
-			return null;
+			return indexSelect(arrSQLTerms,strarrOperators,indexedCols,myTable);
 		} else if (selectionMethod == SelectionMethods.CLUSTERINGKEY){
-			return null;
+			return ClusteringKeySelect(arrSQLTerms,strarrOperators,myTable.getClusteringKeyColumn(),myTable);
 		}
+		throw new DBAppException("Invalid Selection Method");
 	}
 
 

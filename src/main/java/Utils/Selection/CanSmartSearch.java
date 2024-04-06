@@ -15,10 +15,10 @@ public class CanSmartSearch {
             }
         }
         for (SQLTerm sqlTerm : arrSQLTerms){
-            if ( indexedCols.containsKey(sqlTerm._strColumnName) ){
+            if ( indexedCols.containsKey(sqlTerm._strColumnName) && !sqlTerm._strOperator.equals("!=")){
                 return SelectionMethods.INDEX;
             }
-            if (sqlTerm._strColumnName.equals(clusteringKeyCol)){
+            if (sqlTerm._strColumnName.equals(clusteringKeyCol) && !sqlTerm._strOperator.equals("!=")){
                 return SelectionMethods.CLUSTERINGKEY;
             }
         }

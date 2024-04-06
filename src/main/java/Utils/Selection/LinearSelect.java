@@ -13,9 +13,7 @@ import static Utils.Serializer.deserialize;
 
 public class LinearSelect {
     public static Iterator<Tuple> LinearSelect(SQLTerm[] arrSQLTerms,
-                                               String[]  strarrOperators) throws DBAppException {
-        String strTableName = arrSQLTerms[0]._strTableName;
-        Table myTable = (Table) deserialize(strTableName);
+                                               String[]  strarrOperators, Table myTable) throws DBAppException {
         Vector<Tuple> result = new Vector<>();
         for (String pageName : myTable.getPageNames()){
             Page page = (Page) deserialize(pageName);
