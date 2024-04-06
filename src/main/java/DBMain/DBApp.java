@@ -8,18 +8,20 @@ import Structures.Tuple;
 import java.io.File;
 import java.util.*;
 
+import static Utils.Selection.CanSmartSearch.canSmartSearch;
 import static Utils.Serializer.deserialize;
 
 import static Utils.Serializer.serialize;
 
 import static Utils.metaFile.*;
 
+import Utils.Selection.SelectionMethods;
 import Utils.Serializer;
 import Utils.bplustree;
 import Utils.insertWithIndexHandler;
 import Utils.metaFile;
 import Utils.Configurator;
-import static Utils.TableLookupOps.*;
+import Utils.Selection.LinearSelect;
 
 public class DBApp {
 
@@ -170,24 +172,16 @@ public class DBApp {
 
 	public Iterator selectFromTable(SQLTerm[] arrSQLTerms, 
 									String[]  strarrOperators) throws DBAppException{
-		try {
-			// Wild Assumption: All Table names in the arrSQLTerms are the same
-			String strTableName = arrSQLTerms[0]._strTableName;
-			Table myTable = (Table) deserialize(strTableName);
-			Vector<Tuple> result = new Vector<>();
-			for (String pageName : myTable.getPageNames()){
-				Page page = (Page) deserialize(pageName);
-				for (Tuple tuple : page.getTuples()){
-					if (tuple.satisfySQLConditions(arrSQLTerms, strarrOperators)){
-						result.add(tuple);
-					}
-				}
-			}
-			return result.iterator();
-		} catch (DBAppException e){
-			System.out.println(e.getMessage());
+		Table myTable = (Table) deserialize(arrSQLTerms[0]._strTableName);
+		Hashtable<String,String> indexedCols = metaFile.wasIndexMade(arrSQLTerms[0]._strTableName);
+		SelectionMethods selectionMethod = canSmartSearch(arrSQLTerms,strarrOperators,myTable.getClusteringKeyColumn(),indexedCols);
+		if (selectionMethod == SelectionMethods.LINEAR){
+			return LinearSelect.LinearSelect(arrSQLTerms,strarrOperators);
+		} else if (selectionMethod == SelectionMethods.INDEX){
+			return null;
+		} else if (selectionMethod == SelectionMethods.CLUSTERINGKEY){
+			return null;
 		}
-		return null;
 	}
 
 
