@@ -65,6 +65,18 @@ public interface SQLGrammarVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitColumnDefinition(SQLGrammarParser.ColumnDefinitionContext ctx);
 	/**
+	 * Visit a parse tree produced by {@link SQLGrammarParser#clusteringColumnName}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitClusteringColumnName(SQLGrammarParser.ClusteringColumnNameContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link SQLGrammarParser#clusteringColumnValue}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitClusteringColumnValue(SQLGrammarParser.ClusteringColumnValueContext ctx);
+	/**
 	 * Visit a parse tree produced by {@link SQLGrammarParser#columnName}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
@@ -76,6 +88,12 @@ public interface SQLGrammarVisitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitColumnValue(SQLGrammarParser.ColumnValueContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link SQLGrammarParser#indexName}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitIndexName(SQLGrammarParser.IndexNameContext ctx);
 	/**
 	 * Visit a parse tree produced by {@link SQLGrammarParser#dataType}.
 	 * @param ctx the parse tree

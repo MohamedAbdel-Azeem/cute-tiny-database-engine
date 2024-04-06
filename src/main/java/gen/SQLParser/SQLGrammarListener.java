@@ -98,6 +98,26 @@ public interface SQLGrammarListener extends ParseTreeListener {
 	 */
 	void exitColumnDefinition(SQLGrammarParser.ColumnDefinitionContext ctx);
 	/**
+	 * Enter a parse tree produced by {@link SQLGrammarParser#clusteringColumnName}.
+	 * @param ctx the parse tree
+	 */
+	void enterClusteringColumnName(SQLGrammarParser.ClusteringColumnNameContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link SQLGrammarParser#clusteringColumnName}.
+	 * @param ctx the parse tree
+	 */
+	void exitClusteringColumnName(SQLGrammarParser.ClusteringColumnNameContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link SQLGrammarParser#clusteringColumnValue}.
+	 * @param ctx the parse tree
+	 */
+	void enterClusteringColumnValue(SQLGrammarParser.ClusteringColumnValueContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link SQLGrammarParser#clusteringColumnValue}.
+	 * @param ctx the parse tree
+	 */
+	void exitClusteringColumnValue(SQLGrammarParser.ClusteringColumnValueContext ctx);
+	/**
 	 * Enter a parse tree produced by {@link SQLGrammarParser#columnName}.
 	 * @param ctx the parse tree
 	 */
@@ -117,6 +137,16 @@ public interface SQLGrammarListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitColumnValue(SQLGrammarParser.ColumnValueContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link SQLGrammarParser#indexName}.
+	 * @param ctx the parse tree
+	 */
+	void enterIndexName(SQLGrammarParser.IndexNameContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link SQLGrammarParser#indexName}.
+	 * @param ctx the parse tree
+	 */
+	void exitIndexName(SQLGrammarParser.IndexNameContext ctx);
 	/**
 	 * Enter a parse tree produced by {@link SQLGrammarParser#dataType}.
 	 * @param ctx the parse tree

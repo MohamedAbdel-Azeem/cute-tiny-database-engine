@@ -73,6 +73,93 @@ public class SQLWalker extends SQLParser.SQLGrammarBaseListener {
         }
     }
 
+    public void enterCreateIndex(SQLGrammarParser.CreateIndexContext ctx) {
+        String strTableName = ctx.tableName().getText();
+        String strColName = ctx.columnName().getText();
+        String strIndexName = ctx.indexName().getText();
+        try {
+            dbApp.createIndex(strTableName, strColName,strIndexName);
+            System.out.println("Index Created Successfully");
+        } catch (DBAppException e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
+    public void enterUpdateTable(SQLGrammarParser.UpdateTableContext ctx) {
+        String strTableName = ctx.tableName().getText();
+        String strClusteringKeyValue = ctx.clusteringColumnValue().getText();
+        Hashtable<String,Object> htblColNameValue = new Hashtable<>();
+        Vector<String> colNames = new Vector<>();
+        for (SQLGrammarParser.ColumnNameContext node : ctx.columnName()) {
+            colNames.add(node.getText());
+        }
+        int counter = 0;
+        for (SQLGrammarParser.ColumnValueContext node : ctx.columnValue()) {
+            if (node.INT() != null){
+                htblColNameValue.put(colNames.get(counter), Integer.parseInt(node.getText()));
+            } else if (node.DOUBLE() != null){
+                htblColNameValue.put(colNames.get(counter), Double.parseDouble(node.getText()));
+            } else {
+                htblColNameValue.put(colNames.get(counter), node.getText());
+            }
+            counter++;
+        }
+        try {
+            dbApp.updateTable(strTableName,strClusteringKeyValue,htblColNameValue);
+            System.out.println("Row Updated Successfully");
+        } catch (DBAppException e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
+    public void enterDeleteFromTable(SQLGrammarParser.DeleteFromTableContext ctx) {
+        String strTableName = ctx.tableName().getText();
+        Hashtable<String,Object> htblColNameValue = new Hashtable<>();
+        Vector<String> colNames = new Vector<>();
+        for (SQLGrammarParser.ColumnNameContext node : ctx.columnName()) {
+            colNames.add(node.getText());
+        }
+        int counter = 0;
+        for (SQLGrammarParser.ColumnValueContext node : ctx.columnValue()) {
+            if (node.INT() != null){
+                htblColNameValue.put(colNames.get(counter), Integer.parseInt(node.getText()));
+            } else if (node.DOUBLE() != null){
+                htblColNameValue.put(colNames.get(counter), Double.parseDouble(node.getText()));
+            } else {
+                htblColNameValue.put(colNames.get(counter), node.getText());
+            }
+            counter++;
+        }
+        try {
+            dbApp.deleteFromTable(strTableName,htblColNameValue);
+            System.out.println("Row(s) Deleted Successfully");
+        } catch (DBAppException e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
+    public void enterSelectFromTable(SQLGrammarParser.SelectFromTableContext ctx) {
+        SQLTerm[] arrSQLTerms = new SQLTerm[ctx.sqlTerm().size()];
+        String[] strarrOperators = new String[ctx.sqlTerm().size()-1];
+        int counter = 0;
+        for (SQLGrammarParser.SqlTermContext node : ctx.sqlTerm()) {
+            arrSQLTerms[counter] = new SQLTerm(node.columnName().getText(),node.operator().getText(),node.columnValue().getText());
+            counter++;
+        }
+        counter = 0;
+        for (SQLGrammarParser.OperatorContext node : ctx.operator()) {
+            strarrOperators[counter] = node.getText();
+            counter++;
+        }
+        try {
+            dbApp.selectFromTable(arrSQLTerms,strarrOperators);
+        } catch (DBAppException e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
+
+
 
 
 

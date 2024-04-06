@@ -125,6 +125,30 @@ public class SQLGrammarBaseListener implements SQLGrammarListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
+	@Override public void enterClusteringColumnName(SQLGrammarParser.ClusteringColumnNameContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitClusteringColumnName(SQLGrammarParser.ClusteringColumnNameContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterClusteringColumnValue(SQLGrammarParser.ClusteringColumnValueContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitClusteringColumnValue(SQLGrammarParser.ClusteringColumnValueContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
 	@Override public void enterColumnName(SQLGrammarParser.ColumnNameContext ctx) { }
 	/**
 	 * {@inheritDoc}
@@ -144,6 +168,18 @@ public class SQLGrammarBaseListener implements SQLGrammarListener {
 	 * <p>The default implementation does nothing.</p>
 	 */
 	@Override public void exitColumnValue(SQLGrammarParser.ColumnValueContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterIndexName(SQLGrammarParser.IndexNameContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitIndexName(SQLGrammarParser.IndexNameContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
