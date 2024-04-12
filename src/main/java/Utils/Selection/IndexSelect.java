@@ -8,6 +8,7 @@ import Structures.Tuple;
 import Utils.Serializer;
 import Utils.bplustree;
 
+import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.Vector;
@@ -40,11 +41,12 @@ public class IndexSelect {
         }
         if (arrSQLTerms[sqlTermIndex]._strOperator.equals(">=") || arrSQLTerms[sqlTermIndex]._strOperator.equals(">")){
             Vector<Vector<String>> targetPageNames = tree.search((Comparable) arrSQLTerms[sqlTermIndex]._objValue, tree.maxValue);
-            Vector<String> flattenedVector = new Vector<>();
+            HashSet<String> flattenedVector = new HashSet<>();
 
             for (Vector<String> innerVector : targetPageNames) {
                 flattenedVector.addAll(innerVector);
             }
+
             for (String pageName : flattenedVector){
                 Page page = (Page) Serializer.deserialize(pageName);
                 for (Tuple tuple : page.getTuples()){
@@ -56,7 +58,7 @@ public class IndexSelect {
             return result.iterator();
         } else {
             Vector<Vector<String>> targetPageNames = tree.search(tree.minValue, (Comparable) arrSQLTerms[sqlTermIndex]._objValue);
-            Vector<String> flattenedVector = new Vector<>();
+            HashSet<String> flattenedVector = new HashSet<>();
 
             for (Vector<String> innerVector : targetPageNames) {
                 flattenedVector.addAll(innerVector);

@@ -284,21 +284,7 @@ public class DBApp {
 	public static void main( String[] args )  throws DBAppException{
 		DBApp myDB = new DBApp();
 
-//
 
-
-//
-//myDB.iniitiazlizTest();
-
-//		Table first_test = (Table) deserialize("First_Test");
-//		System.out.println(first_test);
-//		System.out.println(first_test.getPageNames());
-//		Hashtable<String,Object> htblColNameValue = new Hashtable<>();
-//	for(int i=24;i<1250;i++){
-//			htblColNameValue.put("id", i);
-//			htblColNameValue.put("name","ABO FREEH" );
-//			htblColNameValue.put("gpa", 0.72);
-//			myDB.insertIntoTable("First_Test",htblColNameValue);
 //
 //		}
 //		myDB.insertIntoTable(`);
@@ -317,6 +303,7 @@ public class DBApp {
 //		bplustree myIndex = (bplustree) deserialize("gpaIndex");
 //		System.out.println(myIndex.search(0.95));
 //
+
 //		bplustree mygpaIndex = (bplustree) deserialize("gpaIndex");
 //		System.out.println(mygpaIndex.search(1.5));
 
@@ -349,38 +336,7 @@ public class DBApp {
 //
 //		bplustree myidIndex = (bplustree) deserialize("myIndex");
 //		System.out.println(Arrays.toString(myidIndex.getRoot()));
-//         bplustree bp = (bplustree) Serializer.deserialize("gpaIndex");
-//		System.out.println(bp.maxValue);
-//		System.out.println(bp.minValue);
-//		SQLTerm[] arrSQLTerms;
-//		arrSQLTerms = new SQLTerm[3];
-//
-//		arrSQLTerms[0] = new SQLTerm();
-//		arrSQLTerms[1] = new SQLTerm();
-//		arrSQLTerms[2] = new SQLTerm();
-//
-//		arrSQLTerms[1]._strTableName = "First_Test";
-//		arrSQLTerms[1]._strColumnName= "gpa";
-//		arrSQLTerms[1]._strOperator = "<";
-//		arrSQLTerms[1]._objValue = new Double(1.0);
-//		arrSQLTerms[0]._strTableName = "First_Test";
-//		arrSQLTerms[0]._strColumnName= "gpa";
-//		arrSQLTerms[0]._strOperator = ">";
-//		arrSQLTerms[0]._objValue = new Double(0.95);
-//		arrSQLTerms[2]._strTableName = "First_Test";
-//		arrSQLTerms[2]._strColumnName= "age";
-//		arrSQLTerms[2]._strOperator = "=";
-//		arrSQLTerms[2]._objValue = 33;
-//		String[] strarrOperators = new String[2];
-//		strarrOperators[0] = "AND";
-//		strarrOperators[1] = "AND";
-//
 
-//		 Should Output 3 Records , Two with GPA 0.95 and One with GPA 0.88
-//		Iterator resultSet = myDB.selectFromTable(arrSQLTerms , strarrOperators);
-//		ArrayList<Tuple> result = Lists.newArrayList(resultSet);
-//
-//		System.out.println(result);
 
 
 	}

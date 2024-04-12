@@ -79,6 +79,7 @@ public class Tuple implements Serializable {
                 boolean rightOperand = literals.remove(i);
                 literals.add(i, leftOperand ^ rightOperand);
                 starrOperandsList.remove(i);
+                i--;
             }
         }
 
