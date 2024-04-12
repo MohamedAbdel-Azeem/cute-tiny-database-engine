@@ -29,6 +29,9 @@ public class Table implements Serializable {
 
 
     public void insertTuple(Hashtable<String, Object> htblColNameValue) throws DBAppException{
+        if(!htblColNameValue.containsKey(this.getClusteringKeyColumn())){
+            throw new DBAppException("Clustering Key is missing");
+        }
         if (! this.isValid(htblColNameValue)){
             throw new DBAppException("Invalid Tuple Data Types");
         }
@@ -72,7 +75,8 @@ public class Table implements Serializable {
             }
             Page newPage = new Page();
             newPage.addTuple(0,lastTuple);
-            String newPageName = tableName+pageNames.size();
+            String newPageName = tableName+(Integer.parseInt(pageNames.getLast().substring(tableName.length()))+1);
+
             pageNames.add(newPageName);
             Serializer.serialize(newPage,newPageName);
             insertWithIndexHandler.handleInsertionShifting(this.tableName,pageNames.get(pageNames.size()-2),newPageName,lastTuple);
@@ -89,7 +93,7 @@ public class Table implements Serializable {
     // Check Uniqueness of Primary Key
     public  boolean isValid(Hashtable<String,Object> htblColNameValue)  { // Check Data Types and Uniqueness of Primary Key
             Hashtable<String,String> ColDataTypes= extractTblCols(this.tableName);
-            if (ColDataTypes.size() != htblColNameValue.size())
+            if(ColDataTypes.size()!=htblColNameValue.size())
                 return false;
             Iterator<String>iterator = (Iterator<String>) ColDataTypes.keys();
             boolean flag=true;
@@ -106,7 +110,7 @@ public class Table implements Serializable {
                 }
                 flag=flag&&cls.isInstance(value);
                 if(!flag){
-                    System.out.println("Data Types are incorrect");
+                    //System.out.println("Data Types are incorrect");
                     return flag;
                    }
             }
@@ -181,6 +185,8 @@ public class Table implements Serializable {
         // Look through each target Page and Check if the Tuple match if yes delete it
         for (String pageName : targetPages){
             Page page = (Page) deserialize(pageName);
+            if(page==null)
+                continue;
             page.getTuples().removeIf(tuple -> tuple.isEqual(htblColNameValue));
             if (page.getTuples().isEmpty()){
                 pageNames.remove(pageName);

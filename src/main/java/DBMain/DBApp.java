@@ -11,6 +11,7 @@ import java.util.*;
 import static Utils.Selection.CanSmartSearch.canSmartSearch;
 import static Utils.Selection.ClusteringKeySelect.ClusteringKeySelect;
 import static Utils.Selection.IndexSelect.indexSelect;
+import static Utils.Selection.SelectinInputValidator.*;
 import static Utils.Serializer.deserialize;
 
 import static Utils.Serializer.serialize;
@@ -24,6 +25,7 @@ import Utils.insertWithIndexHandler;
 import Utils.metaFile;
 import Utils.Configurator;
 import Utils.Selection.LinearSelect;
+import com.github.davidmoten.guavamini.Lists;
 
 public class DBApp {
 
@@ -58,6 +60,9 @@ public class DBApp {
 			File file = new File("DB/"+strTableName+".class");
 			if (file.exists()){
 				throw new DBAppException("Table already exists");
+			}
+			if (!htblColNameType.containsKey(strClusteringKeyColumn)){
+				throw new DBAppException("Clustering Key Column does not exist in columns");
 			}
 			for (String dataType : htblColNameType.values()){
 				if (!dataType.equals("java.lang.Integer") && !dataType.equals("java.lang.String") && !dataType.equals("java.lang.Double")){
@@ -122,6 +127,10 @@ public class DBApp {
 	public void insertIntoTable(String strTableName, 
 								Hashtable<String,Object>  htblColNameValue)  throws DBAppException{
 		try{
+			File file = new File("DB/"+strTableName+".class");
+			if (!file.exists()){
+				throw new DBAppException("Table does not exist exists");
+			}
 			Table myTable = (Table) deserialize(strTableName);
 			myTable.insertTuple(htblColNameValue);
 			serialize(myTable,strTableName);
@@ -139,10 +148,20 @@ public class DBApp {
 	public void updateTable(String strTableName, 
 							String strClusteringKeyValue,
 							Hashtable<String,Object> htblColNameValue   )  throws DBAppException{
-		Table myTable = (Table) deserialize(strTableName);
+		try{File file = new File("DB/"+strTableName+".class");
+			if (!file.exists()){
+				throw new DBAppException("Table does not exist exists");
+			}
+
+			Table myTable = (Table) deserialize(strTableName);
+			if(htblColNameValue.containsKey(myTable.getClusteringKeyColumn())){
+				throw new DBAppException("Clustering Key cannot be updated");
+
+			}
 		Hashtable<String,String> htblColNameType = metaFile.extractTblCols(strTableName);
 		String ClusteringKeyType = htblColNameType.get(myTable.getClusteringKeyColumn());
 		Comparable ClusteringKeyValueObject;
+
 		switch (ClusteringKeyType){
 			case "java.lang.Integer":
 				ClusteringKeyValueObject = Integer.parseInt(strClusteringKeyValue);
@@ -156,7 +175,10 @@ public class DBApp {
 			default:
 				throw new DBAppException("Invalid Data Type");
 		}
-		myTable.updateTuple(ClusteringKeyValueObject,htblColNameValue);
+		myTable.updateTuple(ClusteringKeyValueObject,htblColNameValue);}
+		catch (Exception e){
+			System.out.println(e.getMessage());
+		}
 	}
 
 
@@ -166,6 +188,10 @@ public class DBApp {
 	// htblColNameValue enteries are ANDED together
 	public void deleteFromTable(String strTableName, 
 								Hashtable<String,Object> htblColNameValue) throws DBAppException{
+		File file = new File("DB/"+strTableName+".class");
+		if (!file.exists()){
+			throw new DBAppException("Table does not exist exists");
+		}
 		Table myTable = (Table) deserialize(strTableName);
 		myTable.deleteTuple(htblColNameValue);
 		serialize(myTable,strTableName);
@@ -174,6 +200,9 @@ public class DBApp {
 
 	public Iterator selectFromTable(SQLTerm[] arrSQLTerms, 
 									String[]  strarrOperators) throws DBAppException{
+		try{
+			validateInput(arrSQLTerms);
+
 		Table myTable = (Table) deserialize(arrSQLTerms[0]._strTableName);
 		Hashtable<String,String> indexedCols = metaFile.wasIndexMade(arrSQLTerms[0]._strTableName);
 		SelectionMethods selectionMethod = canSmartSearch(arrSQLTerms,strarrOperators,myTable.getClusteringKeyColumn(),indexedCols);
@@ -185,80 +214,111 @@ public class DBApp {
 			return ClusteringKeySelect(arrSQLTerms,strarrOperators,myTable.getClusteringKeyColumn(),myTable);
 		}
 		throw new DBAppException("Invalid Selection Method");
+		} catch (DBAppException e){
+			throw e;
+		}
 	}
 
+		public void iniitiazlizTest() throws DBAppException {
+			Hashtable htblColNameType = new Hashtable( );
+			htblColNameType.put("id", "java.lang.Integer");
+			htblColNameType.put("name", "java.lang.String");
+			htblColNameType.put("gpa", "java.lang.Double");
 
+		this.createTable("First_Test", "id", htblColNameType);
+
+//
+		Hashtable htblColNameValue = new Hashtable( );
+//////
+		htblColNameValue.put("id", 23 );
+		htblColNameValue.put("name", "Abd el satar");
+		htblColNameValue.put("gpa", 0.8 );
+		this.insertIntoTable( "First_Test" , htblColNameValue );
+//
+		htblColNameValue.clear( );
+		htblColNameValue.put("id", 10 );
+		htblColNameValue.put("name", "Ahmed Noor");
+		htblColNameValue.put("gpa", 0.95);
+		this.insertIntoTable( "First_Test" , htblColNameValue );
+//
+		htblColNameValue.clear( );
+		htblColNameValue.put("id", 9 );
+		htblColNameValue.put("name", "Dalia Noor");
+		htblColNameValue.put("gpa", 1.25 );
+		this.insertIntoTable( "First_Test" , htblColNameValue );
+
+
+		htblColNameValue.clear( );
+		htblColNameValue.put("id",  7500 );
+		htblColNameValue.put("name", "Zaky Noor");
+		htblColNameValue.put("gpa",  0.88 );
+		this.insertIntoTable( "First_Test" , htblColNameValue );
+
+		htblColNameValue.clear( );
+		htblColNameValue.put("id",  5750);
+		htblColNameValue.put("name", "John Noor");
+		htblColNameValue.put("gpa",  1.5 );
+		this.insertIntoTable( "First_Test" , htblColNameValue );
+
+		htblColNameValue.clear( );
+		htblColNameValue.put("id",  15);
+		htblColNameValue.put("name", "Ahmed Noor");
+		htblColNameValue.put("gpa",  1.5 );
+		this.insertIntoTable( "First_Test" , htblColNameValue );
+////
+		htblColNameValue.clear( );
+		htblColNameValue.put("id",  18);
+		htblColNameValue.put("name", "John Noor");
+		htblColNameValue.put("gpa",  1.0 );
+		this.insertIntoTable( "First_Test" , htblColNameValue );
+
+
+
+		this.createIndex("First_Test","gpa","gpaIndex");
+
+
+
+		htblColNameValue.clear();
+
+		}
 	public static void main( String[] args )  throws DBAppException{
 		DBApp myDB = new DBApp();
+
 //
-//		Hashtable htblColNameType = new Hashtable( );
-//		htblColNameType.put("id", "java.lang.Integer");
-//		htblColNameType.put("name", "java.lang.String");
-//		htblColNameType.put("gpa", "java.lang.Double");
-//
-//		myDB.createTable("First_Test", "id", htblColNameType);
-////
-		Hashtable htblColNameValue = new Hashtable( );
-////
-//		htblColNameValue.put("id", 1 );
-//		htblColNameValue.put("name", "Abd el satar");
-//		htblColNameValue.put("gpa", 0.95 );
-//		myDB.insertIntoTable( "First_Test" , htblColNameValue );
-//
-//		htblColNameValue.clear( );
-//		htblColNameValue.put("id", 10 );
-//		htblColNameValue.put("name", "Ahmed Noor");
-//		htblColNameValue.put("gpa", 0.95);
-//		myDB.insertIntoTable( "First_Test" , htblColNameValue );
-////
-//		htblColNameValue.clear( );
-//		htblColNameValue.put("id", 9 );
-//		htblColNameValue.put("name", "Dalia Noor");
-//		htblColNameValue.put("gpa", 1.25 );
-//		myDB.insertIntoTable( "First_Test" , htblColNameValue );
-//
-//
-//		htblColNameValue.clear( );
-//		htblColNameValue.put("id",  7500 );
-//		htblColNameValue.put("name", "Zaky Noor");
-//		htblColNameValue.put("gpa",  0.88 );
-//		myDB.insertIntoTable( "First_Test" , htblColNameValue );
-//
-//		htblColNameValue.clear( );
-//		htblColNameValue.put("id",  5750);
-//		htblColNameValue.put("name", "John Noor");
-//		htblColNameValue.put("gpa",  1.5 );
-//		myDB.insertIntoTable( "First_Test" , htblColNameValue );
-//
-//		htblColNameValue.clear( );
-//		htblColNameValue.put("id",  15);
-//		htblColNameValue.put("name", "Ahmed Noor");
-//		htblColNameValue.put("gpa",  1.5 );
-//		myDB.insertIntoTable( "First_Test" , htblColNameValue );
-////////
-//		htblColNameValue.clear( );
-//		htblColNameValue.put("id",  18);
-//		htblColNameValue.put("name", "John Noor");
-//		htblColNameValue.put("gpa",  1.0 );
-//		myDB.insertIntoTable( "First_Test" , htblColNameValue );
-//
-//
-//
-//		myDB.createIndex("First_Test","gpa","gpaIndex");
 
 
 //
-		htblColNameValue.clear();
-		htblColNameValue.put("gpa",  1.5);
-		htblColNameValue.put("name", "Ahmed Noor");
+//myDB.iniitiazlizTest();
+
+//		Table first_test = (Table) deserialize("First_Test");
+//		System.out.println(first_test);
+//		System.out.println(first_test.getPageNames());
+//		Hashtable<String,Object> htblColNameValue = new Hashtable<>();
+//	for(int i=24;i<1250;i++){
+//			htblColNameValue.put("id", i);
+//			htblColNameValue.put("name","ABO FREEH" );
+//			htblColNameValue.put("gpa", 0.72);
+//			myDB.insertIntoTable("First_Test",htblColNameValue);
 //
+//		}
+//		myDB.insertIntoTable(`);
+//		bplustree myIndex = (bplustree) deserialize("gpaIndex");
+//		System.out.println(myIndex.search(0.72));
+//		htblColNameValue.put("gpa",0.72);
+//		myDB.deleteFromTable("First_Test",htblColNameValue);
+//		myDB.createIndex("First_Test","gpa","gpaInde");
+//		htblColNameValue.put("id",22);
+//		htblColNameValue.put("gpa", 0.91);
+		//htblColNameValue.put("age", 33);
+//		myDB.deleteFromTable("First_Test",htblColNameValue);
+//		myDB.insertIntoTable("First_Test",htblColNameValue);
+//		myDB.insertIntoTable("First_Test",htblColNameValue);
+//		System.out.println(first_test);
+//		bplustree myIndex = (bplustree) deserialize("gpaIndex");
+//		System.out.println(myIndex.search(0.95));
 //
-		Table first_test = (Table) deserialize("First_Test");
-//		myDB.deleteFromTable("First_Test", htblColNameValue);
-		System.out.println(first_test);
-//
-		bplustree mygpaIndex = (bplustree) deserialize("gpaIndex");
-		System.out.println(mygpaIndex.search(1.5));
+//		bplustree mygpaIndex = (bplustree) deserialize("gpaIndex");
+//		System.out.println(mygpaIndex.search(1.5));
 
 
 //		Hashtable<String,Object> htblColNameValue = new Hashtable<>();
@@ -278,13 +338,20 @@ public class DBApp {
 //		htblColNameValue.put("name", "John Noor");
 //		htblColNameValue.put("gpa",  1.5 );
 //		myDB.insertIntoTable( "First_Test" , htblColNameValue );
-
+		//bplustree myIndex = (bplustree) deserialize("gpaIndex");
+//		System.out.println(myIndex.search(2.0));
 //		Table first_test = (Table) deserialize("First_Test");
+//		Hashtable<String,Object> htblColNameValue = new Hashtable<>();
+//		htblColNameValue.put("gpa",new Double(1.6));
+//		myDB.updateTable("First_Test","22",htblColNameValue);
 //		System.out.println(first_test);
+		//System.out.println(myIndex.search(2.0));
 //
 //		bplustree myidIndex = (bplustree) deserialize("myIndex");
 //		System.out.println(Arrays.toString(myidIndex.getRoot()));
-
+//         bplustree bp = (bplustree) Serializer.deserialize("gpaIndex");
+//		System.out.println(bp.maxValue);
+//		System.out.println(bp.minValue);
 //		SQLTerm[] arrSQLTerms;
 //		arrSQLTerms = new SQLTerm[3];
 //
@@ -292,29 +359,28 @@ public class DBApp {
 //		arrSQLTerms[1] = new SQLTerm();
 //		arrSQLTerms[2] = new SQLTerm();
 //
-//		arrSQLTerms[0]._strTableName = "First_Test";
-//		arrSQLTerms[0]._strColumnName= "gpa";
-//		arrSQLTerms[0]._strOperator = "<";
-//		arrSQLTerms[0]._objValue = new Double(1.0);
 //		arrSQLTerms[1]._strTableName = "First_Test";
 //		arrSQLTerms[1]._strColumnName= "gpa";
-//		arrSQLTerms[1]._strOperator = ">";
-//		arrSQLTerms[1]._objValue = new Double(0.9);
+//		arrSQLTerms[1]._strOperator = "<";
+//		arrSQLTerms[1]._objValue = new Double(1.0);
+//		arrSQLTerms[0]._strTableName = "First_Test";
+//		arrSQLTerms[0]._strColumnName= "gpa";
+//		arrSQLTerms[0]._strOperator = ">";
+//		arrSQLTerms[0]._objValue = new Double(0.95);
 //		arrSQLTerms[2]._strTableName = "First_Test";
-//		arrSQLTerms[2]._strColumnName= "name";
+//		arrSQLTerms[2]._strColumnName= "age";
 //		arrSQLTerms[2]._strOperator = "=";
-//		arrSQLTerms[2]._objValue = "Zaky Noor";
+//		arrSQLTerms[2]._objValue = 33;
 //		String[] strarrOperators = new String[2];
 //		strarrOperators[0] = "AND";
-//		strarrOperators[1] = "OR";
+//		strarrOperators[1] = "AND";
 //
-//
-////		 Should Output 3 Records , Two with GPA 0.95 and One with GPA 0.88
+
+//		 Should Output 3 Records , Two with GPA 0.95 and One with GPA 0.88
 //		Iterator resultSet = myDB.selectFromTable(arrSQLTerms , strarrOperators);
-//		while (resultSet.hasNext()){
-//			System.out.print("Record Found: ");
-//			System.out.print(resultSet.next());
-//		}
+//		ArrayList<Tuple> result = Lists.newArrayList(resultSet);
+//
+//		System.out.println(result);
 
 
 	}

@@ -20,7 +20,7 @@ public class Tuple implements Serializable {
 
     public boolean satisfySQLTerm(String strColName , String Operator , Object comparingObject){
         return switch (Operator) {
-            case ">" -> ((Comparable) values.get(strColName)).compareTo(comparingObject) > 0;
+            case ">" -> ((Comparable) values.get(strColName)).compareTo(comparingObject) > 0 ;
             case "<" -> ((Comparable) values.get(strColName)).compareTo(comparingObject) < 0;
             case "=" -> ((Comparable) values.get(strColName)).compareTo(comparingObject) == 0;
             case ">=" -> ((Comparable) values.get(strColName)).compareTo(comparingObject) >= 0;
@@ -40,6 +40,7 @@ public class Tuple implements Serializable {
         // Compare the Tuple with all the Conditions
         LinkedList<Boolean> literals = new LinkedList<>();
         for (SQLTerm sqlTerm : sqlTerms) {
+            System.out.println(sqlTerm._strColumnName + " " + sqlTerm._strOperator + " " + sqlTerm._objValue+" "+ this.values.get(sqlTerm._strColumnName));
             literals.addLast(this.satisfySQLTerm(sqlTerm._strColumnName, sqlTerm._strOperator, sqlTerm._objValue));
         }
 
@@ -48,10 +49,14 @@ public class Tuple implements Serializable {
         // Remove And first
         for (int i = 0; i < starrOperandsList.size() ; i++){
             if (starrOperandsList.get(i).equalsIgnoreCase("AND")){
+
                 boolean leftOperand = literals.remove(i);
                 boolean rightOperand = literals.remove(i);
+
                 literals.add(i, leftOperand && rightOperand);
+
                 starrOperandsList.remove(i);
+                i--;
             }
         }
 
@@ -63,6 +68,7 @@ public class Tuple implements Serializable {
                 boolean rightOperand = literals.remove(i);
                 literals.add(i, leftOperand || rightOperand);
                 starrOperandsList.remove(i);
+                i--;
             }
         }
 

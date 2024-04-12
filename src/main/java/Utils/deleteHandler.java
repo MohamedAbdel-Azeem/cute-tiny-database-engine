@@ -39,6 +39,9 @@ public class deleteHandler {
         Table table = (Table) Serializer.deserialize(strTableName);
         for (String pageName : table.getPageNames()){
             Page page = (Page) Serializer.deserialize(pageName);
+            if(page==null){
+                continue;
+            }
             for (Tuple tuple : page.getTuples()){
                 if (tuple.isEqual(htblColNameValue)){
                     resultPages.add(pageName);
