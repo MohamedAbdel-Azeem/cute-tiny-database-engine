@@ -19,12 +19,13 @@ public class Table implements Serializable {
     private String tableName;
     private String ClusteringKeyColumn;
     private Vector<String> pageNames;
-
+    private Vector<Comparable[]> pageIntervals;
 
     public Table(String tableName, String clusteringKeyColumn) {
         this.tableName = tableName;
         this.ClusteringKeyColumn = clusteringKeyColumn;
         this.pageNames = new Vector<String>();
+        this.pageIntervals = new Vector<Comparable[]>();
     }
 
 
@@ -46,6 +47,12 @@ public class Table implements Serializable {
             pageNames.add(pageName);
             Serializer.serialize(newPage,pageName);
             insertWithIndexHandler.insertIntoIndex(this.tableName,pageName,newTuple);
+
+            Comparable[] interval = new Comparable[2];
+            interval[0] = (Comparable) newTuple.getValue(this.ClusteringKeyColumn);
+            interval[1] = (Comparable) newTuple.getValue(this.ClusteringKeyColumn);
+            pageIntervals.add(interval);
+
             return;
         }
 
@@ -59,17 +66,31 @@ public class Table implements Serializable {
         if (page.isFull()){
             page.getTuples().insertElementAt(newTuple, insertIndex);
             Tuple lastTuple = page.getTuples().removeLast();
+
+            Comparable minValue = (Comparable) page.getTuples().getFirst().getValue(this.ClusteringKeyColumn);
+            Comparable maxValue = (Comparable) page.getTuples().getLast().getValue(this.ClusteringKeyColumn);
+            pageIntervals.get(PageIndex)[0] = minValue;
+            pageIntervals.get(PageIndex)[1] = maxValue;
+
             Serializer.serialize(page,pageNames.get(PageIndex));
             for (int j = PageIndex+1 ; j < pageNames.size(); j++){
                 Page nextPage = (Page) deserialize(pageNames.get(j));
                 insertWithIndexHandler.handleInsertionShifting(this.tableName,pageNames.get(j-1),pageNames.get(j),lastTuple);
                 if (! nextPage.isFull()){
                     nextPage.getTuples().addFirst(lastTuple);
+                    minValue = (Comparable) nextPage.getTuples().getFirst().getValue(this.ClusteringKeyColumn);
+                    maxValue = (Comparable) nextPage.getTuples().getLast().getValue(this.ClusteringKeyColumn);
+                    pageIntervals.get(j)[0] = minValue;
+                    pageIntervals.get(j)[1] = maxValue;
                     Serializer.serialize(nextPage,pageNames.get(j));
                     return;
                 } else {
                     nextPage.getTuples().addFirst(lastTuple);
                     lastTuple = nextPage.getTuples().removeLast();
+                    minValue = (Comparable) nextPage.getTuples().getFirst().getValue(this.ClusteringKeyColumn);
+                    maxValue = (Comparable) nextPage.getTuples().getLast().getValue(this.ClusteringKeyColumn);
+                    pageIntervals.get(j)[0] = minValue;
+                    pageIntervals.get(j)[1] = maxValue;
                     Serializer.serialize(nextPage,pageNames.get(j));
                 }
             }
@@ -79,10 +100,20 @@ public class Table implements Serializable {
 
             pageNames.add(newPageName);
             Serializer.serialize(newPage,newPageName);
+
+            Comparable[] interval = new Comparable[2];
+            interval[0] = (Comparable) newPage.getTuples().getFirst().getValue(this.ClusteringKeyColumn);
+            interval[1] = (Comparable) newPage.getTuples().getLast().getValue(this.ClusteringKeyColumn);
+            pageIntervals.add(interval);
+
             insertWithIndexHandler.handleInsertionShifting(this.tableName,pageNames.get(pageNames.size()-2),newPageName,lastTuple);
             return;
         } else {
             page.getTuples().insertElementAt(newTuple, insertIndex);
+            Comparable minValue = (Comparable) page.getTuples().getFirst().getValue(this.ClusteringKeyColumn);
+            Comparable maxValue = (Comparable) page.getTuples().getLast().getValue(this.ClusteringKeyColumn);
+            pageIntervals.get(PageIndex)[0] = minValue;
+            pageIntervals.get(PageIndex)[1] = maxValue;
             Serializer.serialize(page,pageNames.get(PageIndex));
             return;
         }
@@ -205,6 +236,13 @@ public class Table implements Serializable {
     }
     public String getClusteringKeyColumn() {
         return ClusteringKeyColumn;
+    }
+    public String getPageIntervals() {
+        StringBuilder sb = new StringBuilder();
+        for (Comparable[] interval : pageIntervals){
+            sb.append("[").append(interval[0]).append(",").append(interval[1]).append("] ");
+        }
+        return sb.toString();
     }
 
 
