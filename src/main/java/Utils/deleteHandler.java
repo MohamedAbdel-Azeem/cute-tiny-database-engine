@@ -14,7 +14,7 @@ public class deleteHandler {
         Vector<String> resultPages = new Vector<>();
         Table table = (Table) Serializer.deserialize(strTableName);
         String clusteringKey = table.getClusteringKeyColumn();
-        int pageIndex = TableLookupOps.helper_getPageIndex((Comparable) htblColNameValue.get(clusteringKey),table.getPageNames() , clusteringKey);
+        int pageIndex = TableLookupOps.helper_getPageIndex(table.getPageIntervals(),(Comparable) htblColNameValue.get(clusteringKey));
         resultPages.add(table.getPageNames().get(pageIndex));
         return resultPages;
     }

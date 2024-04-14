@@ -222,10 +222,24 @@ public class DBApp {
 
 	public static void main( String[] args )  throws DBAppException{
 		DBApp myDB = new DBApp();
-		myDB.iniitiazlizTest();
+//		myDB.iniitiazlizTest();
 		Table myTable = (Table) deserialize("First_Test");
 		System.out.println(myTable);
-		System.out.println(myTable.getPageIntervals());
+		System.out.println(myTable.getPageIntervalsString());
+//		Hashtable htblColNameValue = new Hashtable( );
+//		Vector<Integer> numbers=new Vector<Integer>();
+//		for(int i=0;i<100;i++){htblColNameValue.clear( );
+//		 int id = (int) (Math.random() * 1000 + 1);
+//		if(numbers.contains(id))
+//		{i--;
+//			continue;
+//
+//		}numbers.add(id);
+//		htblColNameValue.put("id", id );
+//		htblColNameValue.put("name", "Abd el satar");
+//		htblColNameValue.put("gpa", 0.8 );
+//		myDB.insertIntoTable( "First_Test" , htblColNameValue );
+//		}
 	}
 
 	public void iniitiazlizTest() throws DBAppException {

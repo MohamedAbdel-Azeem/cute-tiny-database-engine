@@ -24,7 +24,7 @@ public class ClusteringKeySelect {
             }
         }
 
-        int targetPageIndex = helper_getPageIndex(targetIndex, myTable.getPageNames(), clusteringKeyCol);
+        int targetPageIndex = helper_getPageIndex(myTable.getPageIntervals(), targetIndex);
         Vector<Tuple> result = new Vector<>();
         if (operator.equals("=")){
             Page targetPage = (Page) Serializer.deserialize(myTable.getPageNames().get(targetPageIndex));

@@ -56,7 +56,7 @@ public class Table implements Serializable {
             return;
         }
 
-        int PageIndex = helper_getPageIndex(newTuple,this.pageNames, this.ClusteringKeyColumn);
+        int PageIndex = helper_getPageIndex(newTuple,this.pageIntervals, this.ClusteringKeyColumn);
         Page page = (Page) deserialize(pageNames.get(PageIndex));
         int insertIndex = helperSearchInsert(page.getTuples(), (Comparable) htblColNameValue.get(this.ClusteringKeyColumn),this.ClusteringKeyColumn);
         if (insertIndex == -1) {
@@ -165,7 +165,7 @@ public class Table implements Serializable {
         if (pageNames.isEmpty()){
             throw new DBAppException("Tuple is not Found");
         }
-        int pageIndex = helper_getPageIndex(clusteringKeyValue,pageNames,this.ClusteringKeyColumn);
+        int pageIndex = helper_getPageIndex(this.pageIntervals,clusteringKeyValue);
         Page page = (Page) deserialize(pageNames.get(pageIndex));
         for (Tuple tuple : page.getTuples()){
             if (tuple.getValue(this.ClusteringKeyColumn).equals(clusteringKeyValue)){
@@ -237,7 +237,10 @@ public class Table implements Serializable {
     public String getClusteringKeyColumn() {
         return ClusteringKeyColumn;
     }
-    public String getPageIntervals() {
+    public Vector<Comparable[]> getPageIntervals() {
+        return pageIntervals;
+    }
+    public String getPageIntervalsString() {
         StringBuilder sb = new StringBuilder();
         for (Comparable[] interval : pageIntervals){
             sb.append("[").append(interval[0]).append(",").append(interval[1]).append("] ");
