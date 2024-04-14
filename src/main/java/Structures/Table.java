@@ -210,7 +210,6 @@ public class Table implements Serializable {
                     targetPages = deleteHandler.deleteWithNothing(this.tableName,htblColNameValue);
                 }
             }
-
         }
         deleteHandler.deleteFromIndexes(targetPages,htblColNameValue,indexedCols);
         // Look through each target Page and Check if the Tuple match if yes delete it
@@ -219,10 +218,16 @@ public class Table implements Serializable {
             if(page==null)
                 continue;
             page.getTuples().removeIf(tuple -> tuple.isEqual(htblColNameValue));
+            int index = pageNames.indexOf(pageName);
             if (page.getTuples().isEmpty()){
                 pageNames.remove(pageName);
+                pageIntervals.remove(index);
                 Serializer.deleteFile(pageName);
             } else {
+                Comparable newMinValue = (Comparable) page.getTuples().getFirst().getValue(this.ClusteringKeyColumn);
+                Comparable newMaxValue = (Comparable) page.getTuples().getLast().getValue(this.ClusteringKeyColumn);
+                pageIntervals.get(index)[0] = newMinValue;
+                pageIntervals.get(index)[1] = newMaxValue;
                 Serializer.serialize(page,pageName);
             }
         }

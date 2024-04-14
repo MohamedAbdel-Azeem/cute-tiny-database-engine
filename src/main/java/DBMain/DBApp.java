@@ -227,6 +227,8 @@ public class DBApp {
 		System.out.println(myTable);
 		System.out.println(myTable.getPageIntervalsString());
 //		Hashtable htblColNameValue = new Hashtable( );
+//		htblColNameValue.put("gpa",0.8);
+//		myDB.deleteFromTable("First_Test",htblColNameValue);
 //		Vector<Integer> numbers=new Vector<Integer>();
 //		for(int i=0;i<100;i++){htblColNameValue.clear( );
 //		 int id = (int) (Math.random() * 1000 + 1);
