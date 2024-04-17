@@ -23,6 +23,9 @@ public class deleteHandler {
         bplustree index = (bplustree) Serializer.deserialize(indexName);
         Vector<String> duplicates =  index.search(searchValue);
         Vector<String> resultPages = new Vector<>();
+        if (duplicates == null){
+            return resultPages;
+        }
         for (String pageName : duplicates){
             Page page = (Page) Serializer.deserialize(pageName);
             for (Tuple tuple : page.getTuples()){
@@ -73,7 +76,7 @@ public class deleteHandler {
                     duplicates.remove(pageName);
                 }
                 index.delete((Comparable) htblColNameValue.get(colName));
-                if (! duplicates.isEmpty()){
+                if (duplicates != null){
                     index.insert((Comparable) htblColNameValue.get(colName),duplicates);
                 }
                 Serializer.serialize(index,indexedCols.get(colName));
