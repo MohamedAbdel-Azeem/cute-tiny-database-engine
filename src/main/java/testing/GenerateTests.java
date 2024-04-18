@@ -96,9 +96,12 @@ public class GenerateTests {
        arrSQLTerms[0]._strTableName="First_Test";
        arrSQLTerms[0]._strOperator="";
        arrSQLTerms[0]._strColumnName="gpa";
-       arrSQLTerms[0]._objValue=0.5;
-       String[] starroperator = new String[0];
-       Iterator<Tuple> result =dbApp.selectFromTable( arrSQLTerms,starroperator);
+       arrSQLTerms[0]._objValue=0;
+       Iterator<Tuple> result =dbApp.selectFromTable( arrSQLTerms,null);
+       Iterator<Tuple> iterator= dbApp.selectFromTable(arrSQLTerms,null);
+       while (iterator.hasNext()) {
+           System.out.println("Result Found="+iterator.next());
+       }
 
    }
 }

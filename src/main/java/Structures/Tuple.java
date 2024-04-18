@@ -107,7 +107,7 @@ public class Tuple implements Serializable {
         if (!values.isEmpty()) {
             sb.deleteCharAt(sb.length() - 1);
         }
-        return sb.toString() + "\n";
+        return sb.toString();
     }
 
     public Hashtable<String, Object> getValues() {

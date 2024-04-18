@@ -231,17 +231,8 @@ public class DBApp {
 
 	public static void main( String[] args )  throws DBAppException{
 		DBApp myDB = new DBApp();
-//		myDB.iniitiazlizTest();
-		SQLTerm[] arrSQLTerms;
-		arrSQLTerms= new SQLTerm[2];
-		arrSQLTerms[0]=new SQLTerm();
-		arrSQLTerms[0]._strTableName="First_Test";
-		arrSQLTerms[1]=new SQLTerm();
-		arrSQLTerms[1]._strTableName="Test";
-		Iterator<Tuple> iterator= myDB.selectFromTable(arrSQLTerms,null);
-		while (iterator.hasNext()) {
-			System.out.println(iterator.next());
-		}
+		Page page = (Page) deserialize("First_Test0");
+		System.out.println(page);
 //		Table myTable = (Table) deserialize("First_Test");
 //		System.out.println(myTable);
 //		System.out.println(myTable.getPageIntervalsString());

@@ -30,9 +30,9 @@ public class Page implements Serializable {
     public String toString(){
         StringBuilder sb = new StringBuilder();
         for (Tuple tuple : tuples){
-            sb.append(tuple.toString());
+            sb.append(tuple.toString()).append(",");
         }
-        return sb.toString();
+        return sb.toString().substring(0,sb.length()-1);
     }
 
 
