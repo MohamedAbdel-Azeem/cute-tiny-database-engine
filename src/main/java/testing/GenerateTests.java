@@ -2,8 +2,11 @@ package testing;
 
 import DBMain.DBApp;
 import DBMain.DBAppException;
+import DBMain.SQLTerm;
+import Structures.Tuple;
 
 import java.util.Hashtable;
+import java.util.Iterator;
 import java.util.Vector;
 import java.util.Random;
 
@@ -85,5 +88,17 @@ public class GenerateTests {
             dbApp.updateTable("students",i+"",htblColNameValue);
         }
     }
+   public void selectOnlyoneconditon() throws  DBAppException{
+       Hashtable<String,Object> htblColNameValue = new Hashtable<>();
+       SQLTerm[] arrSQLTerms;
+       arrSQLTerms= new SQLTerm[1];
+       arrSQLTerms[0]=new SQLTerm();
+       arrSQLTerms[0]._strTableName="First_Test";
+       arrSQLTerms[0]._strOperator="";
+       arrSQLTerms[0]._strColumnName="gpa";
+       arrSQLTerms[0]._objValue=0.5;
+       String[] starroperator = new String[0];
+       Iterator<Tuple> result =dbApp.selectFromTable( arrSQLTerms,starroperator);
 
+   }
 }

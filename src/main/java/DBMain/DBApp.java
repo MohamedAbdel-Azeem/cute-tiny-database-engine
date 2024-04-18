@@ -126,18 +126,13 @@ public class DBApp {
 	// We don't Handle if the table doesn't Exist
 	public void insertIntoTable(String strTableName, 
 								Hashtable<String,Object>  htblColNameValue)  throws DBAppException{
-		try{
-			File file = new File("DB/"+strTableName+".class");
-			if (!file.exists()){
-				throw new DBAppException("Table does not exist exists");
-			}
-			Table myTable = (Table) deserialize(strTableName);
-			myTable.insertTuple(htblColNameValue);
-			serialize(myTable,strTableName);
-			return;
-		} catch (Exception e){
-			System.out.println(e.getMessage());
+		File file = new File("DB/"+strTableName+".class");
+		if (!file.exists()){
+			throw new DBAppException("Table does not exist exists");
 		}
+		Table myTable = (Table) deserialize(strTableName);
+		myTable.insertTuple(htblColNameValue);
+		serialize(myTable,strTableName);
 	}
 
 
@@ -200,11 +195,25 @@ public class DBApp {
 
 	public Iterator selectFromTable(SQLTerm[] arrSQLTerms, 
 									String[]  strarrOperators) throws DBAppException{
-		try{
+		try{String tablename=arrSQLTerms[0]._strTableName;
+			Table myTable = (Table) deserialize(tablename);
+			for(int i=1;i<arrSQLTerms.length;i++){
+			if(!tablename.equals(arrSQLTerms[i]._strTableName))
+				throw new DBAppException("This Engine does not support joins");
+		}if(arrSQLTerms.length==1&&arrSQLTerms[0]._strOperator==null)
+			{
+				Vector<Tuple> result=new Vector<Tuple>();
+				Vector<String> pagenames=myTable.getPageNames();
+				for(int i=0;i<pagenames.size();i++){
+					Page page= (Page) Serializer.deserialize(pagenames.get(i));
+					result.addAll(page.getTuples());
+				}
+				return result.iterator();
+
+			}
 			validateInput(arrSQLTerms);
 
-		Table myTable = (Table) deserialize(arrSQLTerms[0]._strTableName);
-		Hashtable<String,String> indexedCols = metaFile.wasIndexMade(arrSQLTerms[0]._strTableName);
+				Hashtable<String,String> indexedCols = metaFile.wasIndexMade(arrSQLTerms[0]._strTableName);
 		SelectionMethods selectionMethod = canSmartSearch(arrSQLTerms,strarrOperators,myTable.getClusteringKeyColumn(),indexedCols);
 		if (selectionMethod == SelectionMethods.LINEAR){
 			return LinearSelect.LinearSelect(arrSQLTerms,strarrOperators,myTable);
@@ -223,9 +232,19 @@ public class DBApp {
 	public static void main( String[] args )  throws DBAppException{
 		DBApp myDB = new DBApp();
 //		myDB.iniitiazlizTest();
-		Table myTable = (Table) deserialize("First_Test");
-		System.out.println(myTable);
-		System.out.println(myTable.getPageIntervalsString());
+		SQLTerm[] arrSQLTerms;
+		arrSQLTerms= new SQLTerm[2];
+		arrSQLTerms[0]=new SQLTerm();
+		arrSQLTerms[0]._strTableName="First_Test";
+		arrSQLTerms[1]=new SQLTerm();
+		arrSQLTerms[1]._strTableName="Test";
+		Iterator<Tuple> iterator= myDB.selectFromTable(arrSQLTerms,null);
+		while (iterator.hasNext()) {
+			System.out.println(iterator.next());
+		}
+//		Table myTable = (Table) deserialize("First_Test");
+//		System.out.println(myTable);
+//		System.out.println(myTable.getPageIntervalsString());
 //		Hashtable htblColNameValue = new Hashtable( );
 //		htblColNameValue.put("gpa",0.8);
 //		myDB.deleteFromTable("First_Test",htblColNameValue);

@@ -189,6 +189,15 @@ public class Table implements Serializable {
         if (pageNames.isEmpty()){
             throw new DBAppException("Tuple is not Found");
         }
+        if (htblColNameValue.isEmpty()){
+            for (String pageName : pageNames){
+                Serializer.deleteFile(pageName);
+            }
+            pageNames.clear();
+            pageIntervals.clear();
+            System.out.println("Deleting All Tuples ...");
+            return;
+        }
         if (! deleteHandler.isValidDeleteQuery(this.tableName,htblColNameValue)){
             throw new DBAppException("Invalid Delete Query");
         }
