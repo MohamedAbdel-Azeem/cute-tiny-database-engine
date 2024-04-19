@@ -1,0 +1,4 @@
+CREATE TABLE Users ( id INT PRIMARY KEY, name STRING, email STRING );
+INSERT into Users (id,gpa) VALUES (1, 0.7);
+SELECT * FROM Users;
+SELECT * FROM Users WHERE gpa > 0.5 AND name = 'Alice' OR Age >= 20;

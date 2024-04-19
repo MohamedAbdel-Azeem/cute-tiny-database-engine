@@ -31,7 +31,7 @@ starrOperator : AND | OR | XOR;
 
 INTValue : [0-9]+;
 DOUBLEValue : [0-9]+ '.' [0-9]+;
-StringValue : '\'' GenericSTRING '\'';
+StringValue : '\'' (GenericSTRING ' '?)+ '\'' ;
 
 CREATE: C_ R_ E_ A_ T_ E_ ;
 INSERT: I_ N_ S_ E_ R_ T_ ;
@@ -68,7 +68,7 @@ LessThan : '<' ;
 LessThanEquals : '<=' ;
 NotEquals : '!=' ;
 
-GenericSTRING : [a-zA-Z]+ ;
+GenericSTRING : [a-zA-Z0-9_!@#-]+ ;
 
 // Alphabets
 fragment A_: 'a' | 'A';
