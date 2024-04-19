@@ -87,7 +87,7 @@ public class EvaluateTest {
                 }
             }
         }
-
+    generateTests.selectOnlyoneconditon();
         System.out.println("All Tests 1 Passed Successfully");
 
     }
