@@ -220,6 +220,7 @@ public class Table implements Serializable {
                 }
             }
         }
+
         deleteHandler.deleteFromIndexes(targetPages,htblColNameValue,indexedCols);
         // Look through each target Page and Check if the Tuple match if yes delete it
         for (String pageName : targetPages){

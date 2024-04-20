@@ -231,12 +231,21 @@ public class DBApp {
 
 	public static void main( String[] args )  throws DBAppException{
 		DBApp myDB = new DBApp();
-		Page page = (Page) deserialize("First_Test0");
-		System.out.println(page);
+
+//		myDB.iniitiazlizTest();
+//		Hashtable htblColNameValue = new Hashtable( );
+//		myDB.createIndex("First_Test","gpa","gpaIndex");
+//		Page page = (Page) deserialize("First_Test0");
+//		System.out.println(page);
 //		Table myTable = (Table) deserialize("First_Test");
 //		System.out.println(myTable);
 //		System.out.println(myTable.getPageIntervalsString());
 //		Hashtable htblColNameValue = new Hashtable( );
+//		htblColNameValue.put("age",20);
+//		myDB.deleteFromTable("First_Test",htblColNameValue);
+		bplustree myTree = (bplustree) deserialize("gpaIndex");
+//		myTree.delete(0.2);
+		System.out.println(myTree.search(0.88));
 //		htblColNameValue.put("gpa",0.8);
 //		myDB.deleteFromTable("First_Test",htblColNameValue);
 //		Vector<Integer> numbers=new Vector<Integer>();
@@ -251,6 +260,30 @@ public class DBApp {
 //		htblColNameValue.put("name", "Abd el satar");
 //		htblColNameValue.put("gpa", 0.8 );
 //		myDB.insertIntoTable( "First_Test" , htblColNameValue );
+////		}
+//		SQLTerm[] arrSQLTerms;
+//		arrSQLTerms= new SQLTerm[3];
+//		arrSQLTerms[0]=new SQLTerm();
+//		arrSQLTerms[0]._strTableName="First_Test";
+//		arrSQLTerms[0]._strOperator="<";
+//		arrSQLTerms[0]._strColumnName="gpa";
+//		arrSQLTerms[0]._objValue=1.5;
+//		arrSQLTerms[1]=new SQLTerm();
+//		arrSQLTerms[1]._strTableName="First_Test";
+//		arrSQLTerms[1]._strOperator="<";
+//		arrSQLTerms[1]._strColumnName="id";
+//		arrSQLTerms[1]._objValue=20;
+//		arrSQLTerms[2]=new SQLTerm();
+//		arrSQLTerms[2]._strTableName="First_Test";
+//		arrSQLTerms[2]._strOperator="<=";
+//		arrSQLTerms[2]._strColumnName="name";
+//		arrSQLTerms[2]._objValue="John Noor";
+//		String[] strarrOperators = new String[2];
+//		strarrOperators[0] = "XOR";
+//		strarrOperators[1] = "and";
+//		Iterator<Tuple> result = myDB.selectFromTable( arrSQLTerms,strarrOperators);
+//		while (result.hasNext()) {
+//			System.out.println("Result Found="+result.next());
 //		}
 	}
 
@@ -259,6 +292,7 @@ public class DBApp {
 		htblColNameType.put("id", "java.lang.Integer");
 		htblColNameType.put("name", "java.lang.String");
 		htblColNameType.put("gpa", "java.lang.Double");
+		htblColNameType.put("age", "java.lang.Integer");
 
 		this.createTable("First_Test", "id", htblColNameType);
 
@@ -267,19 +301,22 @@ public class DBApp {
 //////
 		htblColNameValue.put("id", 23 );
 		htblColNameValue.put("name", "Abd el satar");
-		htblColNameValue.put("gpa", 0.8 );
+		htblColNameValue.put("gpa", 0.88 );
+		htblColNameValue.put("age", 20 );
 		this.insertIntoTable( "First_Test" , htblColNameValue );
 //
 		htblColNameValue.clear( );
 		htblColNameValue.put("id", 10 );
 		htblColNameValue.put("name", "Ahmed Noor");
 		htblColNameValue.put("gpa", 0.95);
+		htblColNameValue.put("age", 22 );
 		this.insertIntoTable( "First_Test" , htblColNameValue );
 //
 		htblColNameValue.clear( );
 		htblColNameValue.put("id", 9 );
 		htblColNameValue.put("name", "Dalia Noor");
 		htblColNameValue.put("gpa", 1.25 );
+		htblColNameValue.put("age", 32 );
 		this.insertIntoTable( "First_Test" , htblColNameValue );
 
 
@@ -287,24 +324,35 @@ public class DBApp {
 		htblColNameValue.put("id",  7500 );
 		htblColNameValue.put("name", "Zaky Noor");
 		htblColNameValue.put("gpa",  0.88 );
+		htblColNameValue.put("age",  20 );
 		this.insertIntoTable( "First_Test" , htblColNameValue );
 
 		htblColNameValue.clear( );
 		htblColNameValue.put("id",  5750);
 		htblColNameValue.put("name", "John Noor");
 		htblColNameValue.put("gpa",  1.5 );
+		htblColNameValue.put("age",  25 );
 		this.insertIntoTable( "First_Test" , htblColNameValue );
 
 		htblColNameValue.clear( );
 		htblColNameValue.put("id",  15);
 		htblColNameValue.put("name", "Ahmed Noor");
 		htblColNameValue.put("gpa",  1.5 );
+		htblColNameValue.put("age",  24 );
 		this.insertIntoTable( "First_Test" , htblColNameValue );
 ////
 		htblColNameValue.clear( );
 		htblColNameValue.put("id",  18);
 		htblColNameValue.put("name", "John Noor");
 		htblColNameValue.put("gpa",  1.0 );
+		htblColNameValue.put("age",  20 );
+		this.insertIntoTable( "First_Test" , htblColNameValue );
+
+		htblColNameValue.clear( );
+		htblColNameValue.put("id",  20);
+		htblColNameValue.put("name", "John Noor");
+		htblColNameValue.put("gpa",  1.0 );
+		htblColNameValue.put("age",  28 );
 		this.insertIntoTable( "First_Test" , htblColNameValue );
 
 

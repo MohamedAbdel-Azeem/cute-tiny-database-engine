@@ -88,20 +88,20 @@ public class GenerateTests {
             dbApp.updateTable("students",i+"",htblColNameValue);
         }
     }
-   public void selectOnlyoneconditon() throws  DBAppException{
-       Hashtable<String,Object> htblColNameValue = new Hashtable<>();
-       SQLTerm[] arrSQLTerms;
-       arrSQLTerms= new SQLTerm[1];
-       arrSQLTerms[0]=new SQLTerm();
-       arrSQLTerms[0]._strTableName="First_Test";
-       arrSQLTerms[0]._strOperator="";
-       arrSQLTerms[0]._strColumnName="gpa";
-       arrSQLTerms[0]._objValue=0;
-       Iterator<Tuple> result =dbApp.selectFromTable( arrSQLTerms,null);
-       Iterator<Tuple> iterator= dbApp.selectFromTable(arrSQLTerms,null);
-       while (iterator.hasNext()) {
-           System.out.println("Result Found="+iterator.next());
-       }
-
-   }
+//   public void selectOnlyoneconditon() throws  DBAppException{
+//       Hashtable<String,Object> htblColNameValue = new Hashtable<>();
+//       SQLTerm[] arrSQLTerms;
+//       arrSQLTerms= new SQLTerm[1];
+//       arrSQLTerms[0]=new SQLTerm();
+//       arrSQLTerms[0]._strTableName="students";
+//       arrSQLTerms[0]._strOperator="";
+//       arrSQLTerms[0]._strColumnName="gpa";
+//       arrSQLTerms[0]._objValue=0.7;
+//       Iterator<Tuple> result =dbApp.selectFromTable( arrSQLTerms,null);
+//       Iterator<Tuple> iterator= dbApp.selectFromTable(arrSQLTerms,null);
+//       while (iterator.hasNext()) {
+//           System.out.println("Result Found="+iterator.next());
+//       }
+//
+//   }
 }

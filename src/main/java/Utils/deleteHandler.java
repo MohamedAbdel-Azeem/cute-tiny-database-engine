@@ -68,9 +68,14 @@ public class deleteHandler {
     }
 
     public static void deleteFromIndexes(Vector<String> targetPages, Hashtable<String,Object> htblColNameValue, Hashtable<String,String> indexedCols){
+    if(indexedCols==null){
+        return;
+    }
         for (String colName : htblColNameValue.keySet()){
             if (indexedCols.containsKey(colName)){
+
                 bplustree index = (bplustree) Serializer.deserialize(indexedCols.get(colName));
+
                 Vector<String> duplicates = index.search((Comparable) htblColNameValue.get(colName));
                 for (String pageName : targetPages){
                     duplicates.remove(pageName);
@@ -80,6 +85,27 @@ public class deleteHandler {
                     index.insert((Comparable) htblColNameValue.get(colName),duplicates);
                 }
                 Serializer.serialize(index,indexedCols.get(colName));
+            }
+            else{
+                for(String indexName : indexedCols.keySet()){
+                    bplustree index = (bplustree) Serializer.deserialize(indexedCols.get(indexName));
+
+                    for (String pageName : targetPages){
+                       Page page = (Page) Serializer.deserialize(pageName);
+                        for (Tuple tuple : page.getTuples()){
+                            if (tuple.isEqual(htblColNameValue)){
+                                Vector<String> duplicates = index.search((Comparable) tuple.getValue(indexName));
+                                duplicates.remove(pageName);
+                                index.delete((Comparable) tuple.getValue(indexName));
+                                if (duplicates.size()!=0){
+                                    index.insert((Comparable) tuple.getValue(indexName),duplicates);
+                                }
+                            }
+                        }
+                    }
+
+                    Serializer.serialize(index,indexedCols.get(indexName));
+                }
             }
         }
     }

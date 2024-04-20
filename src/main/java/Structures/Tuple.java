@@ -40,7 +40,6 @@ public class Tuple implements Serializable {
         // Compare the Tuple with all the Conditions
         LinkedList<Boolean> literals = new LinkedList<>();
         for (SQLTerm sqlTerm : sqlTerms) {
-            System.out.println(sqlTerm._strColumnName + " " + sqlTerm._strOperator + " " + sqlTerm._objValue+" "+ this.values.get(sqlTerm._strColumnName));
             literals.addLast(this.satisfySQLTerm(sqlTerm._strColumnName, sqlTerm._strOperator, sqlTerm._objValue));
         }
 
