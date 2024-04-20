@@ -31,7 +31,25 @@ public class TableLookupOps {
         return 0;
     }
 
+    public static int helperExistingTuple(Vector<Tuple> page, Comparable target , String ClusteringKeyColumn) {
+        int maxIndex = page.size() - 1;
+        int minIndex = 0;
+        if (target.compareTo(page.get(minIndex).getValue(ClusteringKeyColumn)) < 0) return -1;
+        if (target.compareTo(page.get(maxIndex).getValue(ClusteringKeyColumn)) > 0 ) return -1;
+        if (target.compareTo(page.get(minIndex).getValue(ClusteringKeyColumn)) == 0 ) return minIndex;
+        if (target.compareTo(page.get(maxIndex).getValue(ClusteringKeyColumn)) == 0 ) return maxIndex;
 
+        while (minIndex < maxIndex-1){
+            if (target.compareTo(page.get(minIndex).getValue(ClusteringKeyColumn)) == 0 ) return minIndex;
+            if (target.compareTo(page.get(maxIndex).getValue(ClusteringKeyColumn)) == 0 ) return maxIndex;
+            int half = (maxIndex+minIndex)/2;
+            if (target.compareTo(page.get(half).getValue(ClusteringKeyColumn)) == 0 ) return half;
+            if (target.compareTo(page.get(half).getValue(ClusteringKeyColumn)) < 0 ) maxIndex = half;
+            if (target.compareTo(page.get(half).getValue(ClusteringKeyColumn)) > 0 ) minIndex = half;
+        }
+
+        return -1;
+    }
 
     public static int helper_getPageIndex(Vector<Comparable[]> intervals, Comparable clusteringKeyValue) {
         int low = 0;

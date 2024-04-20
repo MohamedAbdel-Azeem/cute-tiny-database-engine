@@ -167,8 +167,11 @@ public class Table implements Serializable {
         }
         int pageIndex = helper_getPageIndex(this.pageIntervals,clusteringKeyValue);
         Page page = (Page) deserialize(pageNames.get(pageIndex));
-        for (Tuple tuple : page.getTuples()){
-            if (tuple.getValue(this.ClusteringKeyColumn).equals(clusteringKeyValue)){
+     int tupleIndex = helperExistingTuple(page.getTuples(),clusteringKeyValue,this.ClusteringKeyColumn);
+        if (tupleIndex == -1){
+            return;
+        }
+        Tuple tuple = page.getTuples().get(tupleIndex);
                 Hashtable<String,Object> updatedValues = new Hashtable<String,Object>(tuple.getValues());
                 for (String colName : newValues.keySet()){ // Add new Values to the Tuple
                     updatedValues.put(colName,newValues.get(colName));
@@ -180,8 +183,8 @@ public class Table implements Serializable {
                 tuple.updateValues(updatedValues);
                 Serializer.serialize(page,pageNames.get(pageIndex));
                 return;
-            }
-        }
+
+
 
     }
 

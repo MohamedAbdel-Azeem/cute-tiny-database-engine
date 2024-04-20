@@ -28,7 +28,6 @@ public class updateWithIndexHandler {
         duplicates.remove(pageName);
         if (duplicates.isEmpty())
             index.delete(oldIndexKey);
-        System.out.println(newIndexKey+" Test");
         Vector<String> newDuplicates = index.search(newIndexKey);
         if (newDuplicates == null)
             newDuplicates = new Vector<String>();

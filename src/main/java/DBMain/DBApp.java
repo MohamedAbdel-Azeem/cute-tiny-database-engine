@@ -231,21 +231,46 @@ public class DBApp {
 
 	public static void main( String[] args )  throws DBAppException{
 		DBApp myDB = new DBApp();
-
+//		Hashtable htblColNameType = new Hashtable( );
+//		htblColNameType.put("id", "java.lang.Integer");
+//		htblColNameType.put("name", "java.lang.String");
+//		htblColNameType.put("gpa", "java.lang.Double");
+//		htblColNameType.put("age", "java.lang.Integer");
+//
+//		myDB.createTable("First_Test", "id", htblColNameType);
+		Hashtable htblColNameValue = new Hashtable( );
+//		for (int i=0;i<10;i++){
+//			htblColNameValue.clear( );
+//			htblColNameValue.put("id", i+1);
+//			htblColNameValue.put("name", "Abd el satar");
+//			htblColNameValue.put("gpa", 0.8 );
+//			htblColNameValue.put("age", 20 );
+//			myDB.insertIntoTable( "First_Test" , htblColNameValue );
+//
+//		}
 //		myDB.iniitiazlizTest();
-//		Hashtable htblColNameValue = new Hashtable( );
+
+//		htblColNameValue.clear( );
+
+//		for(int i=0;i<10;i++){
+//			htblColNameValue.put("gpa", i+0.1);
+//			myDB.updateTable("First_Test",i+1+"",htblColNameValue);
+//		}
+//		myDB.updateTable("First_Test","10",htblColNameValue);
+
+
 //		myDB.createIndex("First_Test","gpa","gpaIndex");
 //		Page page = (Page) deserialize("First_Test0");
 //		System.out.println(page);
-//		Table myTable = (Table) deserialize("First_Test");
-//		System.out.println(myTable);
+		Table myTable = (Table) deserialize("First_Test");
+		System.out.println(myTable);
 //		System.out.println(myTable.getPageIntervalsString());
 //		Hashtable htblColNameValue = new Hashtable( );
 //		htblColNameValue.put("age",20);
 //		myDB.deleteFromTable("First_Test",htblColNameValue);
-		bplustree myTree = (bplustree) deserialize("gpaIndex");
+//		bplustree myTree = (bplustree) deserialize("gpaIndex");
 //		myTree.delete(0.2);
-		System.out.println(myTree.search(0.88));
+//		System.out.println(myTree.search(2.0));
 //		htblColNameValue.put("gpa",0.8);
 //		myDB.deleteFromTable("First_Test",htblColNameValue);
 //		Vector<Integer> numbers=new Vector<Integer>();
