@@ -56,13 +56,12 @@ public class DBApp {
 	public void createTable(String strTableName, 
 							String strClusteringKeyColumn,  
 							Hashtable<String,String> htblColNameType) throws DBAppException{
-		try{
 			File file = new File("DB/"+strTableName+".class");
 			if (file.exists()){
 				throw new DBAppException("Table already exists");
 			}
 			if (!htblColNameType.containsKey(strClusteringKeyColumn)){
-				throw new DBAppException("Clustering Key Column does not exist in columns");
+				throw new DBAppException("Clustering Key Column does not exist in columns List");
 			}
 			for (String dataType : htblColNameType.values()){
 				if (!dataType.equals("java.lang.Integer") && !dataType.equals("java.lang.String") && !dataType.equals("java.lang.Double")){
@@ -72,9 +71,6 @@ public class DBApp {
 			Table newTable = new Table(strTableName, strClusteringKeyColumn);
 			appendOnMetaDataFile(strTableName,strClusteringKeyColumn,htblColNameType);
 			serialize(newTable,strTableName);
-		} catch (Exception e){
-			System.out.println(e.getMessage());
-		}
 	}
 
 
@@ -143,7 +139,7 @@ public class DBApp {
 	public void updateTable(String strTableName, 
 							String strClusteringKeyValue,
 							Hashtable<String,Object> htblColNameValue   )  throws DBAppException{
-		try{File file = new File("DB/"+strTableName+".class");
+			File file = new File("DB/"+strTableName+".class");
 			if (!file.exists()){
 				throw new DBAppException("Table does not exist exists");
 			}
@@ -170,10 +166,7 @@ public class DBApp {
 			default:
 				throw new DBAppException("Invalid Data Type");
 		}
-		myTable.updateTuple(ClusteringKeyValueObject,htblColNameValue);}
-		catch (Exception e){
-			System.out.println(e.getMessage());
-		}
+		myTable.updateTuple(ClusteringKeyValueObject,htblColNameValue);
 	}
 
 
@@ -195,8 +188,12 @@ public class DBApp {
 
 	public Iterator selectFromTable(SQLTerm[] arrSQLTerms, 
 									String[]  strarrOperators) throws DBAppException{
-		try{String tablename=arrSQLTerms[0]._strTableName;
-			Table myTable = (Table) deserialize(tablename);
+		String tablename=arrSQLTerms[0]._strTableName;
+		File file = new File("DB/"+tablename+".class");
+		if (!file.exists()){
+			throw new DBAppException("Table does not exist exists");
+		}
+		Table myTable = (Table) deserialize(tablename);
 			for(int i=1;i<arrSQLTerms.length;i++){
 			if(!tablename.equals(arrSQLTerms[i]._strTableName))
 				throw new DBAppException("This Engine does not support joins");
@@ -223,9 +220,7 @@ public class DBApp {
 			return ClusteringKeySelect(arrSQLTerms,strarrOperators,myTable.getClusteringKeyColumn(),myTable);
 		}
 		throw new DBAppException("Invalid Selection Method");
-		} catch (DBAppException e){
-			throw e;
-		}
+
 	}
 
 

@@ -31,6 +31,10 @@ public class Serializer {
             //could be written as
             // FileInputStream fileInputStream = new
             //FileInputStream(fileName);
+            File file = new File(path);
+            if (!file.exists()) {
+                throw new FileNotFoundException("File not found");
+            }
             var fileInputStream = new FileInputStream(path);
             var objectInputStream = new ObjectInputStream(fileInputStream);
 
